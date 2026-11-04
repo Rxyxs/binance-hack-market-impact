@@ -73,10 +73,8 @@ def build(r: dict) -> str:
     hy = {d["year"]: d for d in r["hacks_by_year"]}
     fc = r["forecast"]
     y1 = {(d["coin"], d["model"]): d for d in fc["y1_scores"]}
-    y7 = {(d["coin"], d["model"]): d for d in fc["y7_scores"]}
     vs = {(d["coin"], d["model"]): d for d in fc["vol_scores"]}
     cov1 = {d["coin"]: d for d in fc["y1_coverage"]}
-    cov7 = {d["coin"]: d for d in fc["y7_coverage"]}
     abl = {(d["target"], d["group"]): d for d in fc.get("ablation", [])}
     now = r["nowcast"]
 
@@ -111,14 +109,14 @@ def build(r: dict) -> str:
 
     ba = dec[("before_admission", "BTC")]
     s1 = section(1, "Qué pasó esa noche", "What happened that night",
-                 bi(f"El primer envío salió de las wallets de Binance en XRP Ledger a las 20:05 UTC. A las 20:20 salieron "
-                    f"18.270 BTC y comenzó el barrido de Ethereum. Changpeng Zhao escribió \"parece un hackeo\" a las 21:15 "
-                    f"y Binance suspendió retiros a las 00:13. Cinco minutos antes del primer envío había cerrado Nueva York, "
-                    f"y Amazon e Intel publicaron resultados que hundieron los futuros del Nasdaq.",
-                    f"The first outflow left Binance's XRP Ledger wallets at 20:05 UTC. At 20:20, 18,270 BTC left and the "
-                    f"Ethereum sweep began. Changpeng Zhao posted \"does look like a hack\" at 21:15 and Binance halted "
-                    f"withdrawals at 00:13. Five minutes before the first outflow New York had closed, and Amazon and "
-                    f"Intel published earnings that pushed Nasdaq futures down.")
+                 bi("El primer envío salió de las wallets de Binance en XRP Ledger a las 20:05 UTC. A las 20:20 salieron "
+                    "18.270 BTC y comenzó el barrido de Ethereum. Changpeng Zhao escribió \"parece un hackeo\" a las 21:15 "
+                    "y Binance suspendió retiros a las 00:13. Cinco minutos antes del primer envío había cerrado Nueva York, "
+                    "y Amazon e Intel publicaron resultados que hundieron los futuros del Nasdaq.",
+                    "The first outflow left Binance's XRP Ledger wallets at 20:05 UTC. At 20:20, 18,270 BTC left and the "
+                    "Ethereum sweep began. Changpeng Zhao posted \"does look like a hack\" at 21:15 and Binance halted "
+                    "withdrawals at 00:13. Five minutes before the first outflow New York had closed, and Amazon and "
+                    "Intel published earnings that pushed Nasdaq futures down.")
                  + fig("night", "Precios minuto a minuto desde las 20:00 UTC. Zona gris: sin ninguna declaración todavía.",
                        "Minute prices from 20:00 UTC. Grey band: no statement from anyone yet.") + path_tbl)
 
@@ -268,7 +266,7 @@ def build(r: dict) -> str:
 
     # ---------------------------------------------------------------- models
     lg, rg, ml = y1[("all", "lgb")], y1[("all", "ridge")], y1.get(("all", "mlp"))
-    vl, vh = vs[("all", "lgb")], vs[("all", "har")]
+    vl = vs[("all", "lgb")]
     abl_rows = []
     names = {"derivatives": ("financiamiento de futuros", "futures funding"),
              "macro_markets": ("bolsa, tasas, dólar, petróleo", "stocks, rates, dollar, oil"),

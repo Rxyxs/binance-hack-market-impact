@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 from . import datasets, snapshot
-from .config import (COINS, STOLEN, STOLEN_UNITS, T_BINANCE_AWARE, T_CZ_POST,
+from .config import (STOLEN, STOLEN_UNITS, T_BINANCE_AWARE, T_CZ_POST,
                      T_FIRST_OUTFLOW, T_HALT, T_REOPEN, UNTOUCHED, US_CLOSE)
 
 PRE = (pd.Timestamp("2026-10-22", tz="UTC"), pd.Timestamp("2026-10-29 12:00", tz="UTC"))
