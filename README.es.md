@@ -83,7 +83,8 @@ que chico no es lo mismo que minorista.
 **5. Una corrida contra el exchange, pero ordenada.** DefiLlama sigue las monedas en las wallets
 que Binance publica. Valorando el cambio diario en *cantidades* de cada moneda al precio de ese día
 se separan los flujos reales de los movimientos de precio: **-5.950 millones** el 29 de octubre (el
-robo mismo: salieron 16.000 BTC y 230 millones de XRP, lo que calza con lo que TRM reportó robado),
+robo mismo: salieron 16.000 BTC y 230 millones de XRP, cerca de los 18.270 BTC y 233 millones de XRP
+que TRM reportó robados),
 nada mientras los retiros estuvieron suspendidos, y luego **-6.140 millones** el 1 de noviembre y
 **-2.550 millones** el 2. Son 8.700 millones de dólares retirados por clientes en dos días, 6% de los
 144.900 millones que había antes del hackeo. Durante las 54 horas de suspensión, los precios de
@@ -93,7 +94,7 @@ Binance quedaron **entre 3 y 10 puntos básicos sobre** Coinbase y OKX (mediana 
 
 ![Flujos](docs/img/reserve_flows.png)
 
-**6. Las acciones cripto cayeron justo lo que su exposición predecía.** Con Bitcoin medido de un
+**6. Las acciones cripto cayeron más o menos lo que su exposición predecía.** Con Bitcoin medido de un
 cierre de Nueva York al siguiente (-4,95% para la sesión del 30 de octubre, porque el hackeo partió
 después del cierre del 29) y el Nasdaq-100 cayendo 3,5%, un modelo de dos factores ajustado en las 120
 sesiones previas deja a Coinbase en -3,3% anormal (t = -1,2), Robinhood -0,9%, Circle -0,8% y Strategy
