@@ -1,0 +1,25 @@
+name: Track forecast
+on:
+  schedule:
+    - cron: "30 3 * * *"   # Binance publishes the previous UTC day's file a few hours after midnight
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  track:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install numpy pandas pyarrow requests
+      - run: python -m bhack.track
+        env:
+          PYTHONPATH: src
+      - name: Commit the updated record
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/track.json docs/index.html
+          git diff --cached --quiet || (git commit -m "Score the forecast against new closes" && git push)

@@ -1,0 +1,11 @@
+numpy
+pandas>=2.2
+pyarrow
+requests
+scipy
+scikit-learn
+lightgbm
+matplotlib
+yfinance
+torch
+pytest

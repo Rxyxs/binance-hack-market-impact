@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es" data-ui="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Binance Hack Impact</title>
+<meta name="description" content="What the $6.3B Binance hack of October 2026 did to crypto markets, minute by minute, against 36 exchange hacks since 2011, and whether news, war and macro data can forecast crypto prices.">
+<style>
+  :root {
+    --bg: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --muted: #52514e; --faint: #898781;
+    --line: #e1e0d9; --accent: #2a78d6; --accent2: #eb6834;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --muted: #c3c2b7; --faint: #898781;
+      --line: #2c2c2a; --accent: #3987e5; --accent2: #d95926;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --muted: #c3c2b7; --faint: #898781;
+    --line: #2c2c2a; --accent: #3987e5; --accent2: #d95926;
+  }
+  html[data-ui="es"] [lang="en"], html[data-ui="en"] [lang="es"] { display: none !important; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 16px 96px; }
+  .top { display: flex; justify-content: flex-end; gap: 8px; padding-top: 16px; }
+  .top button {
+    font: inherit; font-size: 0.85rem; padding: 6px 12px; border-radius: 7px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  }
+  .top button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  header { padding: 36px 0 36px; border-bottom: 1px solid var(--line); margin-bottom: 36px; }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.15; margin: 0 0 18px; letter-spacing: -0.02em; }
+  .lede { font-size: clamp(1.02rem, 2.4vw, 1.15rem); color: var(--muted); margin: 0 0 22px; max-width: 68ch; }
+  .lede strong { color: var(--ink); }
+  .links a {
+    display: inline-block; margin: 0 10px 10px 0; padding: 9px 15px; border: 1px solid var(--line);
+    border-radius: 7px; text-decoration: none; color: var(--ink); background: var(--surface); font-size: 0.9rem;
+  }
+  .links a:hover { border-color: var(--accent); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 26px 0 0; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; padding: 14px 16px; }
+  .stat b { display: block; font-size: 1.6rem; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .stat span { color: var(--muted); font-size: 0.86rem; }
+  h2 { font-size: 1.38rem; margin: 54px 0 10px; letter-spacing: -0.01em; padding-top: 12px; border-top: 1px solid var(--line); }
+  header + section h2 { border-top: 0; margin-top: 0; padding-top: 0; }
+  h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 10px; }
+  p { margin: 0 0 16px; max-width: 74ch; }
+  figure { margin: 24px 0; }
+  figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 9px; background: #fcfcfb; }
+  figcaption { font-size: 0.85rem; color: var(--muted); margin-top: 8px; max-width: 74ch; }
+  .tablewrap { overflow-x: auto; margin: 20px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.9rem; min-width: 480px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 11px; text-align: right; border-bottom: 1px solid var(--line); }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: .04em; }
+  .note { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent2);
+          border-radius: 7px; padding: 12px 16px; color: var(--muted); font-size: 0.9rem; margin: 22px 0; }
+  footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+  footer a, p a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <button type="button" data-set="es">Español</button>
+    <button type="button" data-set="en">English</button>
+  </div>
+  <header>
+    <h1><span lang="es">El hackeo de US$6.300 millones a Binance: lo que le hizo al mercado cripto, y lo que no</span>
+        <span lang="en">The $6.3B Binance hack: what it did to crypto markets, and what it didn't</span></h1>
+    <p class="lede" lang="es">El 29 de octubre de 2026 a las 20:05 UTC las wallets calientes de Binance en diez blockchains empezaron a enviar
+      monedas a un atacante: <strong>6.360 millones de dólares</strong> según TRM Labs, el mayor robo cripto registrado. Bitcoin cayó bajo
+      77.000 dólares y los titulares culparon al hackeo. Pero cinco minutos antes había cerrado Nueva York y los futuros del Nasdaq caían por
+      los resultados de Amazon e Intel. Desarmé esa noche minuto a minuto con datos reales de Binance, Coinbase, OKX y Yahoo, la comparé con
+      36 hackeos a exchanges desde 2011 y probé si las noticias, la guerra y la macro pueden pronosticar el precio.</p>
+    <p class="lede" lang="en">At 20:05 UTC on 29 October 2026 Binance's hot wallets on ten blockchains began sending coins to an attacker:
+      <strong>$6.36 billion</strong> according to TRM Labs, the largest crypto theft on record. Bitcoin fell below $77,000 and the headlines
+      blamed the hack. But five minutes earlier New York had closed and Nasdaq futures were falling on Amazon's and Intel's earnings. I took
+      that night apart minute by minute with real data from Binance, Coinbase, OKX and Yahoo, compared it with 36 exchange hacks since 2011,
+      and tested whether news, war and macro data can forecast the price.</p>
+    <div class="links">
+      <a href="https://github.com/Rxyxs/binance-hack-market-impact"><span lang="es">Código en GitHub</span><span lang="en">Code on GitHub</span></a>
+      <a href="https://github.com/Rxyxs/binance-hack-market-impact/blob/main/reports/results.json"><span lang="es">Resultados (JSON)</span><span lang="en">Results (JSON)</span></a>
+    </div>
+    <div class="stats">{{STATS}}</div>
+  </header>
+  {{BODY}}
+  <div class="note"><span lang="es">Nada de esto es una recomendación de inversión. Montos y horas del robo: TRM Labs y cronologías de prensa;
+    Binance no ha publicado un informe técnico. Todo el resto sale de datos públicos y del código del repositorio.</span>
+    <span lang="en">Nothing here is investment advice. Stolen amounts and times: TRM Labs and press timelines; Binance has not published a
+    post-mortem. Everything else comes from public data and the code in the repository.</span></div>
+  <footer><span lang="es">Pablo Reyes · datos al 2 de noviembre de 2026 ·</span><span lang="en">Pablo Reyes · data to 2 November 2026 ·</span>
+    <a href="https://github.com/Rxyxs/binance-hack-market-impact">GitHub</a></footer>
+</div>
+<script>
+(function () {
+  var root = document.documentElement, key = "bhack-lang", saved = null;
+  try { saved = localStorage.getItem(key); } catch (e) {}
+  var lang = saved || ((navigator.language || "en").slice(0, 2) === "es" ? "es" : "en");
+  function set(l) {
+    root.setAttribute("data-ui", l); root.setAttribute("lang", l);
+    document.querySelectorAll(".top button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-set") === l ? "true" : "false");
+    });
+    try { localStorage.setItem(key, l); } catch (e) {}
+  }
+  document.querySelectorAll(".top button").forEach(function (b) {
+    b.addEventListener("click", function () { set(b.getAttribute("data-set")); });
+  });
+  set(lang);
+})();
+</script>
+</body>
+</html>

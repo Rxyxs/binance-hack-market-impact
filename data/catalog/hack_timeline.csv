@@ -1,0 +1,18 @@
+time_utc,kind,event,source
+2026-10-29 20:05,onchain,"First outflow: five Binance XRP Ledger wallets send 233.46M XRP to one address",https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history
+2026-10-29 20:20,onchain,"Binance Bitcoin hot wallet sends 18,270 BTC; Ethereum hot wallet delegated via EIP-7702",https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history
+2026-10-29 20:23,onchain,"Main Ethereum sweep: 167,464 ETH and 63 tokens including 1.615B USDT",https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history
+2026-10-29 21:01,freeze,"Tether freezes 971.1M USDT in the main receiving wallet",https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history
+2026-10-29 21:04,freeze,"Circle freezes 823M USDC",https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history
+2026-10-29 21:15,statement,"Changpeng Zhao posts that user funds are safe but it 'does look like a hack'",https://cryptoticker.io/en/crypto-crash-binance-hack-timeline-liquidations/
+2026-10-29 21:24,statement,"Binance says it is aware of a potential security issue and is investigating",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-10-29 23:05,onchain,"Second wave: Binance wallets on Avalanche and Polygon send funds",https://www.trmlabs.com/resources/blog/north-korea-steals-usd-6-36-billion-from-binance-in-the-largest-hack-in-history
+2026-10-30 00:13,statement,"Binance pauses deposits and withdrawals and promises to cover all losses",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-10-30 02:25,statement,"First findings: compromised DevOps laptop, impact about $6.3B, about $3B frozen",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-10-30 04:36,statement,"Deposits resume; withdrawals stay paused",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-10-30 10:45,attribution,"TRM Labs and Chainalysis attribute the hack to North Korea's TraderTraitor",https://cryptoticker.io/en/crypto-crash-binance-hack-timeline-liquidations/
+2026-10-30 19:58,statement,"Recovery update: $6.34B set aside, about 80% of losses covered",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-10-31 14:30,statement,"Recovery update: 90% covered",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-10-31 22:36,attribution,"FBI names North Korea as responsible",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-11-01 04:11,statement,"Recovery update: 95% covered, withdrawals to restart in phases",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
+2026-11-01 06:00,statement,"Phase one of withdrawals begins",https://stealthex.io/blog/binance-hack-everything-we-know-about-the-6-3b-theft/
