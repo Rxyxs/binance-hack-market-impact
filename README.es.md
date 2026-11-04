@@ -17,7 +17,7 @@ titulares culparon al hackeo.
 
 Pero cinco minutos antes del primer envío había cerrado la bolsa de Nueva York, y Amazon e Intel
 publicaron resultados que hundieron los futuros del Nasdaq. Bitcoin además venía 16% bajo su máximo
-de enero, y el petróleo estaba en 117 dólares por la guerra con Irán. Así que desarmé la noche minuto
+de enero, y el Brent estaba sobre 110 dólares por la guerra con Irán. Así que desarmé la noche minuto
 a minuto con precios y cada transacción de Binance, Coinbase, OKX y Yahoo Finance; la comparé con
 todos los hackeos a exchanges de 30 millones de dólares o más desde 2011; y probé si las noticias, la
 guerra, la macro y los datos on-chain pueden pronosticar el precio de las criptomonedas.
@@ -31,8 +31,11 @@ Todo corre con datos públicos que no piden clave de API, y cada cifra de abajo 
 | Desde las 20:00 UTC del 29 oct hasta... | BTC | ETH | BNB | Futuros Nasdaq-100 |
 |---|---|---|---|---|
 | 21:15, cuando el fundador de Binance escribió "parece un hackeo" | -2,0% | -2,9% | -4,6% | -1,2% |
-| 00:13, cuando se suspendieron los retiros | -4,0% | -4,4% | -7,1% | |
+| 00:13, cuando se suspendieron los retiros | -4,0% | -4,4% | -7,1% | -1,7% |
 | el cierre del 2 de noviembre | -5,1% | -3,6% | -6,3% | -4,7% |
+
+Los cambios de esta tabla y de los hallazgos 1 a 6 son retornos logarítmicos, que se suman entre
+ventanas; a estos tamaños difieren en menos de 0,2 puntos de los cambios porcentuales simples.
 
 ## Hallazgos
 
@@ -58,7 +61,7 @@ el mercado se enteró por el anuncio; en 2026, por la blockchain.
 
 ![Detector](docs/img/detector.png)
 
-**3. Solo se castigó al token del propio Binance. Nadie apostó a que el ladrón vendería.** Si el
+**3. Se castigó al token del propio Binance. Nadie apostó a que el ladrón vendería.** Si el
 mercado hubiera temido que el atacante vendiera 18.270 BTC o 233 millones de XRP (tres días de volumen
 de XRP en Binance), las monedas de las cadenas vaciadas tendrían que haber caído más que el resto. No
 pasó: desde las 20:00 hasta la reapertura de retiros, su retorno neto de beta por Bitcoin fue **+3,6

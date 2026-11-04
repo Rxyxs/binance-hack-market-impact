@@ -16,7 +16,7 @@ Bitcoin fell below $77,000 that night and BNB lost 7%. The headlines blamed the 
 
 Five minutes before the first outflow, though, the New York stock market had closed, and Amazon
 and Intel published earnings that sent Nasdaq futures down. Bitcoin had also lost 16% from its
-January high, and oil was at $117 because of the war with Iran. So I took the night apart, minute by
+January high, and Brent crude was above $110 because of the war with Iran. So I took the night apart, minute by
 minute, with prices and every trade from Binance, Coinbase, OKX and Yahoo Finance; I compared it
 with every exchange hack of $30 million or more since 2011; and I tested whether news, war,
 macro and on-chain data can forecast crypto prices.
@@ -31,8 +31,11 @@ running the code.
 | From 20:00 UTC on 29 Oct to... | BTC | ETH | BNB | Nasdaq-100 futures |
 |---|---|---|---|---|
 | 21:15, when Binance's founder posted "does look like a hack" | -2.0% | -2.9% | -4.6% | -1.2% |
-| 00:13, when withdrawals were halted | -4.0% | -4.4% | -7.1% | |
+| 00:13, when withdrawals were halted | -4.0% | -4.4% | -7.1% | -1.7% |
 | the close of 2 November | -5.1% | -3.6% | -6.3% | -4.7% |
+
+The changes in this table and in findings 1 to 6 are log returns, which add up across windows; at
+these sizes they are within 0.2 points of simple percentage changes.
 
 ## Findings
 
@@ -57,7 +60,7 @@ the announcement; in 2026 it learned from the blockchain.
 
 ![Detector](docs/img/detector.png)
 
-**3. Only Binance's own token was singled out. Nobody priced a dump of the loot.** If traders
+**3. Binance's own token was punished. Nobody priced a dump of the loot.** If traders
 had feared the attacker selling 18,270 BTC or 233 million XRP (three days of Binance's XRP
 volume), coins from the drained chains should have fallen more than the rest. They did not: from
 20:00 to the reopening of withdrawals, their return net of beta times Bitcoin was **+3.6 points** on
@@ -79,7 +82,7 @@ one price, and algorithms split large orders into small pieces, so small is not 
 **5. A run on the exchange, but an orderly one.** DefiLlama tracks the coins on Binance's
 published wallets. Valuing each day's change in coin *quantities* at that day's prices separates
 real flows from price moves: **-$5.95 billion** on 29 October (the theft itself: 16,000 BTC and 230
-million XRP left, matching what TRM reported stolen), nothing while withdrawals were halted, then
+million XRP left, close to the 18,270 BTC and 233 million XRP that TRM reported stolen), nothing while withdrawals were halted, then
 **-$6.14 billion** on 1 November and **-$2.55 billion** on 2 November. That is $8.7 billion of customer
 withdrawals in two days, 6% of the $144.9 billion held before the hack. During the 54-hour halt
 Binance's prices sat **3-10 basis points above** Coinbase and OKX (median BTC gap to Coinbase +8.6 bp,
@@ -87,7 +90,7 @@ against +0.9 the week before): the market valued a dollar trapped on Binance at 
 
 ![Flows](docs/img/reserve_flows.png)
 
-**6. Crypto stocks fell exactly as much as their exposure predicted.** With Bitcoin measured
+**6. Crypto stocks fell about as much as their exposure predicted.** With Bitcoin measured
 from one New York close to the next (-4.95% for the 30 October session, since the hack began after
 the 29 October close) and the Nasdaq-100 down 3.5%, a two-factor model fitted on the prior 120
 sessions leaves Coinbase at -3.3% abnormal (t = -1.2), Robinhood -0.9%, Circle -0.8% and Strategy

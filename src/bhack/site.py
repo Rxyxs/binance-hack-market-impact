@@ -118,7 +118,11 @@ def build(r: dict) -> str:
                     "withdrawals at 00:13. Five minutes before the first outflow New York had closed, and Amazon and "
                     "Intel published earnings that pushed Nasdaq futures down.")
                  + fig("night", "Precios minuto a minuto desde las 20:00 UTC. Zona gris: sin ninguna declaración todavía.",
-                       "Minute prices from 20:00 UTC. Grey band: no statement from anyone yet.") + path_tbl)
+                       "Minute prices from 20:00 UTC. Grey band: no statement from anyone yet.") + path_tbl
+                 + bi("Retornos logarítmicos: se suman entre ventanas y, a estos tamaños, difieren en menos de 0,2 "
+                      "puntos de los cambios porcentuales simples.",
+                      "Log returns: they add up across windows and, at these sizes, are within 0.2 points of simple "
+                      "percentage changes.", "figcaption"))
 
     s2 = section(2, "¿Hackeo o Nasdaq?", "Hack or Nasdaq?",
                  bi(_es(f"Ajusté los retornos de 5 minutos de Bitcoin a los futuros del Nasdaq-100, el dólar y el oro en la "
