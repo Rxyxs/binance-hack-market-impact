@@ -102,8 +102,10 @@
   <div class="cx">
     <div class="cx-bar" id="cx-bar"></div>
     <div id="cx-chart"></div>
-    <div class="cx-note"><span lang="es">Velas reales de Binance spot (pares USDT). Arrastra y haz zoom. Barras inferiores: volumen en USD.</span>
-      <span lang="en">Real Binance spot candles (USDT pairs). Drag and zoom. Lower bars: USD volume.</span>
+    <div id="cx-oi" style="height:130px;margin-top:6px"></div>
+    <div class="tablewrap" id="cx-tab"></div>
+    <div class="cx-note"><span lang="es">Velas reales de Binance spot (pares USDT). Arrastra y haz zoom. Barras inferiores: volumen en USD. Futuros: perpetuos USDT e interés abierto en millones de dólares. Semana: velas de 15 minutos; Mes, Año e Histórico: diarias (Histórico en escala logarítmica, desde que el par se lista en Binance). El efecto a un mes o un año aún no se puede observar. En las vistas diarias, las líneas amarillas son el pronóstico con su banda de 90%, hecho con datos al 2 de noviembre.</span>
+      <span lang="en">Real Binance spot candles (USDT pairs). Drag and zoom. Lower bars: USD volume. Futures: USDT perpetuals and open interest in $M. Week: 15-minute candles; Month, Year and All: daily (All on a log scale, since the pair listed on Binance). The effect at one month or one year cannot be observed yet. On daily views, the yellow lines are the forecast and its 90% band, made with data to 2 November.</span>
       <a href="https://www.tradingview.com/">Charts by TradingView</a></div>
   </div>
   {{BODY}}
@@ -138,7 +140,9 @@
 (function () {
   var host = document.getElementById("cx-chart");
   if (!window.LightweightCharts || !window.CANDLES) { host.parentNode.style.display = "none"; return; }
-  var UP = "#0ecb81", DOWN = "#f6465d", state = { coin: "BTC", tf: "15m" };
+  var UP = "#0ecb81", DOWN = "#f6465d", state = { coin: "BTC", tf: "week" };
+  function daily() { return state.tf === "month" || state.tf === "year" || state.tf === "all"; }
+  var oiHost = document.getElementById("cx-oi");
   var EVENTS = [["2026-10-29T20:00:00Z", "20:05 outflow"], ["2026-10-29T21:15:00Z", "21:15 CZ"],
                 ["2026-10-30T00:00:00Z", "00:13 halt"], ["2026-11-01T06:00:00Z", "reopen"]];
   var chart = LightweightCharts.createChart(host, {
@@ -146,24 +150,64 @@
     layout: { background: { color: "#181a20" }, textColor: "#848e9c" },
     grid: { vertLines: { color: "#2b3139" }, horzLines: { color: "#2b3139" } },
     rightPriceScale: { borderColor: "#2b3139", scaleMargins: { top: 0.05, bottom: 0.25 } },
-    timeScale: { borderColor: "#2b3139", timeVisible: true, secondsVisible: false }
+    timeScale: { borderColor: "#2b3139", timeVisible: true, secondsVisible: false, minBarSpacing: 0.05 }
   });
   var candles = chart.addCandlestickSeries({ upColor: UP, downColor: DOWN, wickUpColor: UP, wickDownColor: DOWN, borderVisible: false,
     priceFormat: { type: "price", precision: 4, minMove: 0.0001 } });
   var volume = chart.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" } });
   chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+  var dark = { layout: { background: { color: "#181a20" }, textColor: "#848e9c" },
+    grid: { vertLines: { color: "#2b3139" }, horzLines: { color: "#2b3139" } },
+    rightPriceScale: { borderColor: "#2b3139" }, timeScale: { borderColor: "#2b3139", timeVisible: true } };
+  var oiChart = LightweightCharts.createChart(oiHost, Object.assign({ autoSize: true }, dark));
+  var oiLine = oiChart.addLineSeries({ color: "#fcd535", lineWidth: 1, title: "OI $M" });
+  chart.timeScale().subscribeVisibleLogicalRangeChange(function (r) {
+    if (r && !daily()) oiChart.timeScale().setVisibleLogicalRange(r);
+  });
+  function band(style) {
+    return chart.addLineSeries({ color: "#fcd535", lineWidth: 1, lineStyle: style, priceLineVisible: false, lastValueVisible: false });
+  }
+  var lo = band(2), mid = band(0), hi = band(2);
   function draw() {
-    var d = CANDLES[state.tf][state.coin];
+    var d = CANDLES[daily() ? "1d" : (state.tf === "fut" ? "fut" : "15m")][state.coin];
     var p = d[0][4] > 1000 ? 2 : (d[0][4] > 10 ? 2 : 4);
     candles.applyOptions({ priceFormat: { type: "price", precision: p, minMove: Math.pow(10, -p) } });
     candles.setData(d.map(function (b) { return { time: b[0], open: b[1], high: b[2], low: b[3], close: b[4] }; }));
     volume.setData(d.map(function (b) { return { time: b[0], value: b[5], color: b[4] >= b[1] ? "rgba(14,203,129,.45)" : "rgba(246,70,93,.45)" }; }));
-    var step = state.tf === "15m" ? 900 : 86400;
-    candles.setMarkers(EVENTS.filter(function (e, i) { return state.tf === "15m" || i === 0 || i === 3; }).map(function (e) {
+    var step = daily() ? 86400 : 900;
+    candles.setMarkers(EVENTS.filter(function (e, i) { return !daily() || i === 0 || i === 3; }).map(function (e) {
       var t = Math.floor(Date.parse(e[0]) / 1000 / step) * step;
-      return { time: t, position: "aboveBar", color: "#fcd535", shape: "arrowDown", text: state.tf === "15m" ? e[1] : (e[1] === "reopen" ? "reopen" : "hack") };
+      return { time: t, position: "aboveBar", color: "#fcd535", shape: "arrowDown", text: !daily() ? e[1] : (e[1] === "reopen" ? "reopen" : "hack") };
     }));
+    var pts = CANDLES.fc[state.coin], start = d.filter(function (b) { return b[0] === CANDLES.asof; })[0];
+    [lo, mid, hi].forEach(function (s, k) {
+      s.setData(daily() && start ? [{ time: start[0], value: start[4] }].concat(pts.map(function (f) {
+        return { time: f[0], value: f[k + 1] }; })) : []);
+    });
+    oiHost.style.display = state.tf === "fut" ? "block" : "none";
+    oiLine.setData(CANDLES.oi[state.coin].map(function (o) { return { time: o[0], value: o[1] }; }));
+    chart.applyOptions({ rightPriceScale: { mode: state.tf === "all" ? 1 : 0 } });
     chart.timeScale().fitContent();
+    var HACK = Date.parse("2026-10-29T20:00:00Z") / 1000, end = d[d.length - 1][0] + 10 * 86400;
+    if (state.tf === "week") chart.timeScale().setVisibleRange({ from: HACK - 3.5 * 86400, to: HACK + 3.5 * 86400 });
+    if (state.tf === "month") chart.timeScale().setVisibleRange({ from: HACK - 30 * 86400, to: end });
+    if (state.tf === "year") chart.timeScale().setVisibleRange({ from: HACK - 365 * 86400, to: end });
+    table();
+  }
+  function table() {
+    var d = CANDLES["1d"][state.coin], eve = Date.parse("2026-10-28T00:00:00Z") / 1000;
+    function at(t) { var r = d[0]; d.forEach(function (b) { if (b[0] <= t) r = b; }); return r; }
+    function pct(a, b) { var v = 100 * (b / a - 1); return '<td style="color:' + (v >= 0 ? UP : DOWN) + '">' + (v >= 0 ? "+" : "") + v.toFixed(1) + "%</td>"; }
+    var e = at(eve)[4], last = d[d.length - 1];
+    document.getElementById("cx-tab").innerHTML = '<table><thead><tr><th>' + state.coin + '</th>' +
+      '<th><span lang="es">7 días antes</span><span lang="en">7 days before</span></th>' +
+      '<th><span lang="es">30 días antes</span><span lang="en">30 days before</span></th>' +
+      '<th><span lang="es">1 año antes</span><span lang="en">1 year before</span></th>' +
+      '<th><span lang="es">Desde su inicio</span><span lang="en">Since listing</span></th>' +
+      '<th><span lang="es">Hackeo a ' + new Date(last[0] * 1000).toISOString().slice(0, 10) + '</span><span lang="en">Hack to ' + new Date(last[0] * 1000).toISOString().slice(0, 10) + '</span></th></tr></thead><tbody><tr>' +
+      '<td><span lang="es">Cambio al 28 oct</span><span lang="en">Change to Oct 28</span></td>' +
+      pct(at(eve - 7 * 86400)[4], e) + pct(at(eve - 30 * 86400)[4], e) + pct(at(eve - 365 * 86400)[4], e) + pct(d[0][1], e) + pct(e, last[4]) +
+      '</tr></tbody></table>';
   }
   var bar = document.getElementById("cx-bar");
   function add(label, key, val) {
@@ -179,7 +223,7 @@
   }
   ["BTC", "BNB", "ETH", "XRP", "SOL"].forEach(function (c) { add(c, "coin", c); });
   var sep = document.createElement("span"); sep.className = "cx-sep"; bar.appendChild(sep);
-  add("15m", "tf", "15m"); add("1D", "tf", "1d");
+  [["Semana / Week", "week"], ["Mes / Month", "month"], ["Año / Year", "year"], ["Histórico / All", "all"], ["Futuros / Futures", "fut"]].forEach(function (x) { add(x[0], "tf", x[1]); });
   sync(); draw();
 })();
 </script>

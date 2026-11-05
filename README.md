@@ -26,6 +26,10 @@ running the code.
 
 ## What happened
 
+![Binance candles](docs/img/binance_impact.png)
+
+![Week, month, year, all](docs/img/binance_history.png)
+
 ![Minute by minute](docs/img/night.png)
 
 | From 20:00 UTC on 29 Oct to... | BTC | ETH | BNB | Nasdaq-100 futures |
