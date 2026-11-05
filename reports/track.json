@@ -1,6 +1,6 @@
 {
  "asof": "2026-11-02",
- "checked": "2026-11-04",
+ "checked": "2026-11-05",
  "rows": [
   {
    "coin": "BNB",
@@ -10,11 +10,11 @@
    "p50": 699.175289,
    "p95": 721.390931,
    "last_close": 699.25,
-   "close": 698.39,
-   "source": "okx",
+   "close": 698.14,
+   "source": "binance",
    "inside_90": true,
-   "median_error": -0.0011231646946836538,
-   "no_change_error": -0.0012298891669646483
+   "median_error": -0.0014807288190644696,
+   "no_change_error": -0.0015874150875938575
   },
   {
    "coin": "BNB",
@@ -38,11 +38,11 @@
    "p50": 76820.350794,
    "p95": 79192.116865,
    "last_close": 76816.0,
-   "close": 77336.75,
-   "source": "coinbase",
+   "close": 77453.86,
+   "source": "binance",
    "inside_90": true,
-   "median_error": 0.0067221667261683216,
-   "no_change_error": 0.0067791866277859825
+   "median_error": 0.00824663255832836,
+   "no_change_error": 0.008303738804415817
   },
   {
    "coin": "BTC",
@@ -66,11 +66,11 @@
    "p50": 2253.289766,
    "p95": 2329.328755,
    "last_close": 2253.29,
-   "close": 2271.64,
-   "source": "coinbase",
+   "close": 2274.77,
+   "source": "binance",
    "inside_90": true,
-   "median_error": 0.008143752426735151,
-   "no_change_error": 0.008143647732870463
+   "median_error": 0.009532832538502678,
+   "no_change_error": 0.009532727700384713
   },
   {
    "coin": "ETH",
@@ -94,11 +94,11 @@
    "p50": 92.050573,
    "p95": 95.529716,
    "last_close": 91.98,
-   "close": 92.71,
-   "source": "coinbase",
+   "close": 92.83,
+   "source": "binance",
    "inside_90": true,
-   "median_error": 0.007163746824259354,
-   "no_change_error": 0.007936507936507908
+   "median_error": 0.008467378035767359,
+   "no_change_error": 0.00924113937812554
   },
   {
    "coin": "SOL",
@@ -122,11 +122,11 @@
    "p50": 1.249789,
    "p95": 1.291714,
    "last_close": 1.2502,
-   "close": 1.2752,
-   "source": "coinbase",
+   "close": 1.2767,
+   "source": "binance",
    "inside_90": true,
-   "median_error": 0.02033223208077506,
-   "no_change_error": 0.01999680051191799
+   "median_error": 0.02153243467497301,
+   "no_change_error": 0.021196608542633166
   },
   {
    "coin": "XRP",

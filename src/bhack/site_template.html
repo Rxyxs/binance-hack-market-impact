@@ -61,6 +61,15 @@
   thead th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: .04em; }
   .note { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent2);
           border-radius: 7px; padding: 12px 16px; color: var(--muted); font-size: 0.9rem; margin: 22px 0; }
+  .cx { background: #181a20; border-radius: 9px; padding: 12px; margin: 28px 0 8px; color: #eaecef; }
+  .cx-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; }
+  .cx-bar button { font: inherit; font-size: 0.82rem; padding: 4px 10px; border: 0; border-radius: 5px;
+    background: transparent; color: #848e9c; cursor: pointer; }
+  .cx-bar button[aria-pressed="true"] { background: #2b3139; color: #fcd535; }
+  .cx-sep { width: 1px; height: 18px; background: #2b3139; margin: 0 6px; }
+  #cx-chart { height: 460px; }
+  .cx-note { font-size: 0.78rem; color: #848e9c; margin-top: 8px; }
+  .cx-note a { color: #848e9c; }
   footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
   footer a, p a { color: var(--accent); }
 </style>
@@ -90,6 +99,13 @@
     </div>
     <div class="stats">{{STATS}}</div>
   </header>
+  <div class="cx">
+    <div class="cx-bar" id="cx-bar"></div>
+    <div id="cx-chart"></div>
+    <div class="cx-note"><span lang="es">Velas reales de Binance spot (pares USDT). Arrastra y haz zoom. Barras inferiores: volumen en USD.</span>
+      <span lang="en">Real Binance spot candles (USDT pairs). Drag and zoom. Lower bars: USD volume.</span>
+      <a href="https://www.tradingview.com/">Charts by TradingView</a></div>
+  </div>
   {{BODY}}
   <div class="note"><span lang="es">Nada de esto es una recomendación de inversión. Montos y horas del robo: TRM Labs y cronologías de prensa;
     Binance no ha publicado un informe técnico. Todo el resto sale de datos públicos y del código del repositorio.</span>
@@ -114,6 +130,57 @@
     b.addEventListener("click", function () { set(b.getAttribute("data-set")); });
   });
   set(lang);
+})();
+</script>
+<script src="candles.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+(function () {
+  var host = document.getElementById("cx-chart");
+  if (!window.LightweightCharts || !window.CANDLES) { host.parentNode.style.display = "none"; return; }
+  var UP = "#0ecb81", DOWN = "#f6465d", state = { coin: "BTC", tf: "15m" };
+  var EVENTS = [["2026-10-29T20:00:00Z", "20:05 outflow"], ["2026-10-29T21:15:00Z", "21:15 CZ"],
+                ["2026-10-30T00:00:00Z", "00:13 halt"], ["2026-11-01T06:00:00Z", "reopen"]];
+  var chart = LightweightCharts.createChart(host, {
+    autoSize: true,
+    layout: { background: { color: "#181a20" }, textColor: "#848e9c" },
+    grid: { vertLines: { color: "#2b3139" }, horzLines: { color: "#2b3139" } },
+    rightPriceScale: { borderColor: "#2b3139", scaleMargins: { top: 0.05, bottom: 0.25 } },
+    timeScale: { borderColor: "#2b3139", timeVisible: true, secondsVisible: false }
+  });
+  var candles = chart.addCandlestickSeries({ upColor: UP, downColor: DOWN, wickUpColor: UP, wickDownColor: DOWN, borderVisible: false,
+    priceFormat: { type: "price", precision: 4, minMove: 0.0001 } });
+  var volume = chart.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" } });
+  chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+  function draw() {
+    var d = CANDLES[state.tf][state.coin];
+    var p = d[0][4] > 1000 ? 2 : (d[0][4] > 10 ? 2 : 4);
+    candles.applyOptions({ priceFormat: { type: "price", precision: p, minMove: Math.pow(10, -p) } });
+    candles.setData(d.map(function (b) { return { time: b[0], open: b[1], high: b[2], low: b[3], close: b[4] }; }));
+    volume.setData(d.map(function (b) { return { time: b[0], value: b[5], color: b[4] >= b[1] ? "rgba(14,203,129,.45)" : "rgba(246,70,93,.45)" }; }));
+    var step = state.tf === "15m" ? 900 : 86400;
+    candles.setMarkers(EVENTS.filter(function (e, i) { return state.tf === "15m" || i === 0 || i === 3; }).map(function (e) {
+      var t = Math.floor(Date.parse(e[0]) / 1000 / step) * step;
+      return { time: t, position: "aboveBar", color: "#fcd535", shape: "arrowDown", text: state.tf === "15m" ? e[1] : (e[1] === "reopen" ? "reopen" : "hack") };
+    }));
+    chart.timeScale().fitContent();
+  }
+  var bar = document.getElementById("cx-bar");
+  function add(label, key, val) {
+    var b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.dataset.key = key; b.dataset.val = val;
+    b.addEventListener("click", function () { state[key] = val; sync(); draw(); });
+    bar.appendChild(b);
+  }
+  function sync() {
+    bar.querySelectorAll("button").forEach(function (b) {
+      b.setAttribute("aria-pressed", state[b.dataset.key] === b.dataset.val ? "true" : "false");
+    });
+  }
+  ["BTC", "BNB", "ETH", "XRP", "SOL"].forEach(function (c) { add(c, "coin", c); });
+  var sep = document.createElement("span"); sep.className = "cx-sep"; bar.appendChild(sep);
+  add("15m", "tf", "15m"); add("1D", "tf", "1d");
+  sync(); draw();
 })();
 </script>
 </body>

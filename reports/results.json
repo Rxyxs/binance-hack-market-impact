@@ -9195,5 +9195,34 @@
     "coin_dummies": 0.001348
    }
   }
+ },
+ "gru": {
+  "y1": {
+   "n": 8830,
+   "r2_vs_zero": -0.016963,
+   "r2_lgb": -0.006338,
+   "hit_rate": 0.516761,
+   "best_epoch_min": 100,
+   "best_epoch_median": 102.0,
+   "best_epoch_max": 126
+  },
+  "y7": {
+   "n": 8800,
+   "r2_vs_zero": -0.123113,
+   "r2_lgb": -0.020458,
+   "hit_rate": 0.521477,
+   "best_epoch_min": 100,
+   "best_epoch_median": 100.0,
+   "best_epoch_max": 103
+  },
+  "vol": {
+   "n": 8800,
+   "r2": 0.188718,
+   "r2_har": 0.192629,
+   "r2_vs_har": -0.004844,
+   "dm_p": 0.781384,
+   "best_epoch_median": 100.0,
+   "best_epoch_max": 130
+  }
  }
 }

@@ -12,7 +12,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from . import (annual, datasets, detector, eventstudy, figures, forecast, intraday, nowcast,
+from . import (annual, candles, datasets, deep, detector, eventstudy, figures, forecast, intraday, nowcast,
                snapshot)
 from .config import REPORTS
 
@@ -88,6 +88,8 @@ def main(with_nn: bool = True) -> dict:
                     "vol": _records(now["vol"]),
                     "vol_drivers": _clean(now["vol_drivers"].to_dict(orient="index"))},
     }
+    results["gru"] = deep.summary()
+    candles.build()
     results = _clean(results)
     (REPORTS / "results.json").write_text(json.dumps(results, indent=1, allow_nan=False), encoding="utf-8")
 

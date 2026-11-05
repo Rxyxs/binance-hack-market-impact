@@ -7,7 +7,7 @@
 ![Data](https://img.shields.io/badge/data-real%2C%20public-2a78d6)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**Live page:** https://rxyxs.github.io/binance-hack-market-impact/
+**Live page:** https://rxyxs.github.io/binance-hack-market-impact/ (includes interactive Binance candlestick charts)
 
 At 20:05 UTC on 29 October 2026, Binance's hot wallets on ten blockchains began sending coins
 to an attacker: 18,270 BTC, 200,630 ETH, 233 million XRP, 970,500 SOL and about $3.4 billion in
@@ -129,6 +129,7 @@ rally was real, but it had stalled before the hack.
 
 - A long/flat strategy on LightGBM's sign lost to buy-and-hold on all five coins (BTC -48% against +61% holding, after 10 bp per switch).
 - The MLP trained at least 100 epochs at every quarterly refit and kept its best validation checkpoint. On returns that checkpoint was always between epoch 1 and 10 (median 1): anything it learned after the first epochs was noise.
+- A GRU over the last 20 days, trained at least 100 epochs per quarterly refit with early stopping and checkpointing from epoch 100 (best epoch 100 to 126 on returns), did not help either: R² -1.7% at one day and -12.3% at 7 days, direction right on 51.7% of days; for volatility, as a correction to HAR, 18.9% against 19.3% (Diebold-Mariano p = 0.78). Its best epoch sits at the 100-epoch floor: longer training only added noise.
 - Added one group at a time to price and volume (quarterly refits), no group moves the next-day error by more than 0.7%. For volatility, **every news group makes the forecast worse**: stocks and rates +4.2%, on-chain +3.5%, the hack register +3.2%, sentiment +2.7%, war and policy indices +2.4% more error; only futures funding helps (-0.3%). What the war and the news did to prices was already in the prices by the time the indices came out.
 - The 90% bands are honest on average (they covered 89.2% of next-day moves and 86.2% of 7-day ones) and they did not see the hack coming: for 29 October BTC's band was -3.0% to +3.7% and it fell 4.1%; BNB's was -3.2% to +4.2% and it fell 8.1%. All five coins closed below their bands.
 

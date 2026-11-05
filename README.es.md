@@ -7,7 +7,7 @@
 ![Datos](https://img.shields.io/badge/datos-reales%2C%20p%C3%BAblicos-2a78d6)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
 
-**Página:** https://rxyxs.github.io/binance-hack-market-impact/
+**Página:** https://rxyxs.github.io/binance-hack-market-impact/ (incluye velas interactivas de Binance)
 
 El 29 de octubre de 2026 a las 20:05 UTC, las wallets calientes de Binance en diez blockchains
 empezaron a enviar monedas a un atacante: 18.270 BTC, 200.630 ETH, 233 millones de XRP, 970.500 SOL y
@@ -134,6 +134,7 @@ estaba en 115 dólares después de ocho meses de guerra en el Golfo y la tasa a 
 
 - Una estrategia de comprar o quedarse fuera según el signo de LightGBM perdió contra mantener en las cinco monedas (BTC -48% contra +61% manteniendo, con 10 pb por cambio).
 - La MLP entrenó al menos 100 épocas en cada reentrenamiento trimestral y guardó su mejor checkpoint de validación. En retornos ese checkpoint siempre estuvo entre la época 1 y la 10 (mediana 1): lo que aprendía después de las primeras épocas era ruido.
+- Un GRU sobre los últimos 20 días, con al menos 100 épocas por reentrenamiento trimestral, early stopping y checkpoint desde la época 100 (mejor época 100 a 126 en retornos), tampoco ayudó: R² -1,7% a un día y -12,3% a 7 días, dirección correcta en 51,7% de los días; en volatilidad, como corrección de HAR, 18,9% contra 19,3% (Diebold-Mariano p = 0,78). Su mejor época queda pegada al piso de 100: entrenar más solo agregó ruido.
 - Agregando un grupo a la vez a precio y volumen (reentrenamiento trimestral), ningún grupo mueve el error de mañana en más de 0,7%. En volatilidad, **cada grupo de noticias empeora el pronóstico**: bolsa y tasas +4,2%, on-chain +3,5%, registro de hackeos +3,2%, sentimiento +2,7%, índices de guerra y política +2,4% más error; solo el financiamiento de futuros ayuda (-0,3%). Lo que la guerra y las noticias le hicieron a los precios ya estaba en los precios cuando salieron los índices.
 - Las bandas de 90% son honestas en promedio (cubrieron 89,2% de los movimientos de un día y 86,2% de los de 7 días) y no vieron venir el hackeo: para el 29 de octubre la banda de BTC era -3,0% a +3,7% y cayó 4,1%; la de BNB -3,2% a +4,2% y cayó 8,1%. Las cinco monedas cerraron bajo su banda.
 

@@ -305,6 +305,14 @@ def build(r: dict) -> str:
                      f"<strong>Next week's volatility is predictable</strong>: LightGBM explains {_f(vl['r2'], 0, True)} of its "
                      f"variance and cuts the HAR model's error by {_f(vl['r2_vs_har'], 0, True)} (Diebold-Mariano p = "
                      f"{vl['dm_p']:.3f}). The 90% bands cover {_f(cov1['all']['cover_conformal_90'], 1, True)} of days.")
+                  + bi(_es(f"También entrené un GRU sobre los últimos 20 días, con al menos 100 épocas por reentrenamiento y "
+                           f"early stopping y checkpoint desde la época 100. No mejora: R² {_f(r['gru']['y1']['r2_vs_zero'], 1, True)} "
+                           f"a un día y {_f(r['gru']['y7']['r2_vs_zero'], 1, True)} a 7 días; en volatilidad "
+                           f"{_f(r['gru']['vol']['r2'], 1, True)} contra {_f(r['gru']['vol']['r2_har'], 1, True)} de HAR."),
+                       f"I also trained a GRU over the last 20 days, with at least 100 epochs per refit and early stopping "
+                       f"and checkpointing from epoch 100. It does not help: R² {_f(r['gru']['y1']['r2_vs_zero'], 1, True)} at one "
+                       f"day and {_f(r['gru']['y7']['r2_vs_zero'], 1, True)} at 7 days; for volatility "
+                       f"{_f(r['gru']['vol']['r2'], 1, True)} against {_f(r['gru']['vol']['r2_har'], 1, True)} for HAR.")
                   + fig("skill", "R² fuera de muestra, 2022-2026. Izquierda: retornos contra \"sin cambio\". Derecha: volatilidad.",
                         "Out-of-sample R², 2022-2026. Left: returns against \"no change\". Right: volatility.")
                   + (table(["Feature group added to price data", "Next-day return error", "Next-week volatility error"],
