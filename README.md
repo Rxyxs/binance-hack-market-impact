@@ -113,6 +113,14 @@ windows match or exceed. Hack size barely predicts the reaction (correlation -0.
 
 ![Event study](docs/img/event_study.png)
 
+**After: a week, a month and a year.** This hack is too recent to measure at those horizons, but 35 earlier
+ones can be measured against random dates of the same year. At a week and a month BTC cannot be told from any other
+date; at a year it stands at -10.9% against +15.6%, which is not conclusive (p = 0.12).
+
+![After a hack](docs/img/after_hacks.png)
+
+![Recovery](docs/img/recovery.png)
+
 **8. Was the market really in an uptrend?** On 28 October Bitcoin closed at $81,344. It had gained
 43% in the third quarter (its 50-day average, $81,943, was above the 200-day, $73,111), but it was
 already down 2.7% in October, 7.2% for the year and **16% below its January high** of $96,952. Brent
@@ -153,6 +161,12 @@ The medians are "no change", as the evaluation says they should be; the informat
 
 ![Forecast](docs/img/nowcast.png)
 
+**11. Where the price can go.** Ranges built from pieces of each coin's own historical moves, with no trend
+added. It is not a prediction: BTC at a month 67,752 - 97,839 and at a year 37,696 - 173,735 dollars (90%). Tested from every month
+since 2020 on earlier data, the 90% range held 84% at 7 days and 88% at a year.
+
+![Scenarios](docs/img/scenarios.png)
+
 ## By year
 
 Bitcoin on Binance spot (BTCUSDT only; Binance also lists BTC against other stablecoins):
@@ -173,6 +187,8 @@ Bitcoin on Binance spot (BTCUSDT only; Binance also lists BTC against other stab
 Money stolen in crypto per year (DefiLlama hack register, all targets):
 
 ![History](docs/img/history.png)
+
+![Year by year](docs/img/annual.png)
 
 2026 is already the worst year on record at **$8.78 billion** to 2 November, $6.82 billion of it from
 centralized exchanges; the Binance hack alone is 72% of the year.

@@ -78,6 +78,12 @@ def calibrate(z: pd.Series) -> float:
     return 30.0
 
 
+def _relative(px: pd.DataFrame, a: pd.Timestamp, b: pd.Timestamp) -> pd.Series:
+    """BNB divided by BTC, as % change from the start of the window."""
+    ratio = (px["BNB"] / px["BTC"]).loc[a:b]
+    return 100 * (ratio / ratio.iloc[0] - 1)
+
+
 def run_case(name: str) -> dict:
     case = CASES[name]
     px = load(case)
@@ -99,6 +105,7 @@ def run_case(name: str) -> dict:
         "minutes_before_admission": None if alarm is None else (admitted - alarm) / pd.Timedelta(minutes=1),
         "min_z_first_12h": float(after.min()), "min_z_time": str(after.idxmin()),
         "z_trace": z[(z.index >= event - pd.Timedelta(hours=3)) & (z.index < event + pd.Timedelta(hours=8))],
+        "rel_trace": _relative(px, event - pd.Timedelta(hours=3), event + pd.Timedelta(hours=8)),
     }
 
 

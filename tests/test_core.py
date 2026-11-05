@@ -137,3 +137,32 @@ def test_track_scores_only_resolved_days(tmp_path, monkeypatch):
     one = [r for r in out["rows"] if r["horizon"] == 1][0]
     assert one["no_change_error"] == pytest.approx(-0.06)
     assert [r for r in out["rows"] if r["horizon"] == 7][0]["close"] is None
+
+
+def test_forward_return_and_days_to_recover():
+    from bhack import aftermath
+    idx = pd.date_range("2024-01-01", periods=10)
+    c = pd.Series([100, 100, 100, 90, 92, 95, 99, 101, 103, 105.0], index=idx)
+    day0 = idx[3]
+    assert aftermath.forward_return(c, day0, 4) == pytest.approx(101 / 100 - 1)
+    assert np.isnan(aftermath.forward_return(c, day0, 50))
+    assert aftermath.days_to_recover(c, day0) == 5  # from the close of the 3rd to the 8th
+    assert aftermath.days_to_recover(pd.Series([100, 101, 102.0], index=idx[:3]), idx[1]) == 0
+
+
+def test_scenarios_have_no_trend_and_widen_with_horizon():
+    from bhack import scenarios
+    rng = np.random.default_rng(6)
+    r = rng.normal(0.01, 0.03, 1500)  # a strong upward drift must not reach the median path
+    short, long = scenarios.simulate(r, 7, sims=3000), scenarios.simulate(r, 180, sims=3000)
+    assert abs(np.median(long)) < 0.1
+    assert np.subtract(*np.quantile(long, [0.95, 0.05])) > 2 * np.subtract(*np.quantile(short, [0.95, 0.05]))
+
+
+def test_scenario_backtest_is_calibrated_on_a_random_walk():
+    from bhack import scenarios
+    rng = np.random.default_rng(7)
+    idx = pd.date_range("2018-01-01", "2026-01-01")
+    close = pd.Series(100 * np.exp(np.cumsum(rng.standard_t(4, len(idx)) * 0.02)), index=idx)
+    t = scenarios.backtest(close, 30)
+    assert 0.78 <= t["inside"].mean() <= 1.0

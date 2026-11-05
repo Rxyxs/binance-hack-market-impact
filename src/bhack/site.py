@@ -1,5 +1,6 @@
 """Builds docs/index.html from reports/results.json. Bilingual: every text block exists in
-Spanish and English and a toggle shows one. Numbers are read from the results, never typed."""
+Spanish and English and a toggle shows one. Numbers are read from the results, never typed.
+Each section is a question, a short answer, charts with a how-to-read note, then detail."""
 from __future__ import annotations
 
 import html
@@ -32,16 +33,28 @@ def _es(s: str) -> str:
 
 
 def _px(v: float) -> str:
-    return f"{v:,.4f}" if v < 10 else f"{v:,.2f}"
+    return f"{v:,.4f}" if v < 10 else (f"{v:,.2f}" if v < 1000 else f"{v:,.0f}")
 
 
 def bi(es: str, en: str, tag: str = "p") -> str:
-    return f'<{tag} lang="es">{es}</{tag}><{tag} lang="en">{en}</{tag}>'
+    return f'<{tag} lang="es">{_es(es)}</{tag}><{tag} lang="en">{en}</{tag}>'
+
+
+def ans(es: str, en: str) -> str:
+    return (f'<div class="answer"><b lang="es">Respuesta corta</b><b lang="en">Short answer</b>'
+            f'<p lang="es">{_es(es)}</p><p lang="en">{en}</p></div>')
 
 
 def fig(name: str, es: str, en: str) -> str:
-    return (f'<figure><img src="img/{name}.png" alt="{html.escape(en)}" loading="lazy">'
-            f'<figcaption lang="es">{es}</figcaption><figcaption lang="en">{en}</figcaption></figure>')
+    """Chart in the reader's language with a note on how to read it."""
+    return (f'<figure><img lang="es" src="img/es/{name}.png" alt="{html.escape(es)}" loading="lazy">'
+            f'<img lang="en" src="img/{name}.png" alt="{html.escape(en)}" loading="lazy">'
+            f'<figcaption lang="es"><b>Cómo leerlo:</b> {_es(es)}</figcaption>'
+            f'<figcaption lang="en"><b>How to read it:</b> {en}</figcaption></figure>')
+
+
+def lab(es: str, en: str) -> str:
+    return f'<span lang="es">{es}</span><span lang="en">{en}</span>'
 
 
 def table(head: list[str], rows: list[list[str]], head_es: list[str] | None = None) -> str:
@@ -61,7 +74,7 @@ def build(r: dict) -> str:
     P = r["paths"]
     dec = {(d["window"], d["coin"]): d for d in r["decomposition"]}
     dec30 = {(d["window"], d["coin"]): d for d in r["decomposition_30min"]}
-    det = r["detector"]
+    d26, d19 = r["detector"]["2026"], r["detector"]["2019"]
     flow = {(d["window"], d["coin"]): d for d in r["flow"]}
     svu = {d["window"]: d for d in r["stolen_vs_untouched"]}
     gm = r["abnormal_group_means"]
@@ -73,300 +86,261 @@ def build(r: dict) -> str:
     hy = {d["year"]: d for d in r["hacks_by_year"]}
     fc = r["forecast"]
     y1 = {(d["coin"], d["model"]): d for d in fc["y1_scores"]}
+    y7 = {(d["coin"], d["model"]): d for d in fc["y7_scores"]}
     vs = {(d["coin"], d["model"]): d for d in fc["vol_scores"]}
     cov1 = {d["coin"]: d for d in fc["y1_coverage"]}
-    abl = {(d["target"], d["group"]): d for d in fc.get("ablation", [])}
-    now = r["nowcast"]
+    cov7 = {d["coin"]: d for d in fc["y7_coverage"]}
+    now, gru, am, sc = r["nowcast"], r["gru"], r["aftermath"], r["scenarios"]
+    coins = {d["coin"]: d for d in am["coins"]}
+    hz = {(d["group"], d["horizon"]): d for d in am["horizons"]}
 
     btc_n2 = dec[("to_nov2_close", "BTC")]
     btc_n2_30 = dec30[("to_nov2_close", "BTC")]
+    ba = dec[("before_admission", "BTC")]
     flows_out = rf["2026-11-01"]["net_flow_bn"] + rf["2026-11-02"]["net_flow_bn"]
     pre_assets = rf["2026-10-28"]["assets_bn"]
+    last_day = coins["BTC"]["last_day"]
+    h365 = hz[("all", 365)]
 
     stats = [
-        ("$6.36B", "robados en 10 cadenas (TRM Labs)", "stolen across 10 chains (TRM Labs)"),
+        ("$6.36B", "robados en 10 blockchains (TRM Labs)", "stolen across 10 blockchains (TRM Labs)"),
         (_f(100 * btc_n2["explained"] / btc_n2["actual"], 0) + "%",
-         _es(f"de la caída de BTC ({_f(btc_n2['actual'], 1, True)}) la predice el Nasdaq"),
-         f"of BTC's fall ({_f(btc_n2['actual'], 1, True)}) is predicted by the Nasdaq"),
-        (f"{det['2026']['minutes_before_admission']:.0f} min",
-         "antes de que Binance hablara, una alarma de mercado ya había saltado",
-         "before Binance spoke, a market-data alarm had already fired"),
-        (f"${-flows_out:.1f}B", _es(f"retirados en 2 días al reabrir ({_f(-flows_out / pre_assets, 0, True)} de los activos)"),
-         f"withdrawn in 2 days after reopening ({_f(-flows_out / pre_assets, 0, True)} of assets)"),
+         _es(f"de la caída de BTC ({_f(btc_n2['actual'], 1, True)}) la predice la bolsa tecnológica"),
+         f"of BTC's fall ({_f(btc_n2['actual'], 1, True)}) is predicted by tech stocks"),
+        (f"{d26['minutes_before_admission']:.0f} min", "antes de que se admitiera el robo, el precio de BNB ya lo delataba",
+         "before the theft was admitted, BNB's price already gave it away"),
+        (f"${-flows_out:.1f}B", _es(f"retirados por clientes en 2 días al reabrir ({_f(-flows_out / pre_assets, 0, True)} de los activos)"),
+         f"withdrawn by customers in 2 days after reopening ({_f(-flows_out / pre_assets, 0, True)} of assets)"),
     ]
-    stat_html = "".join(f'<div class="stat"><b>{v}</b><span lang="es">{es}</span><span lang="en">{en}</span></div>'
-                        for v, es, en in stats)
+    stat_html = "".join(f'<div class="stat"><b>{v}</b><span lang="es">{e}</span><span lang="en">{n}</span></div>' for v, e, n in stats)
+
+    sum_es = [
+        f"<b>El hackeo dolió, pero no fue lo único.</b> Bitcoin cayó {_f(-btc_n2['actual'], 1, True)} hasta el 2 de noviembre, y la caída de las tecnológicas predice cerca de {_f(-btc_n2_30['explained'], 1, True)} a {_f(-btc_n2['explained'], 1, True)} de eso.",
+        f"<b>El precio delató el robo.</b> BNB cayó tanto que una alarma simple saltó a las {d26['alarm'][11:16]} UTC, {d26['minutes_before_admission']:.0f} minutos antes de que CZ lo admitiera.",
+        "<b>El castigo fue para Binance, no para lo robado.</b> Las monedas de las cadenas vaciadas no cayeron más que el resto; BNB sí.",
+        f"<b>Hubo corrida, pero ordenada.</b> Los clientes sacaron {-flows_out:.1f} mil millones de dólares en dos días, {_f(-flows_out / pre_assets, 0, True)} de lo que había.",
+        f"<b>La historia no muestra un efecto claro.</b> Tras 35 hackeos anteriores, BTC a una semana no se distingue de una fecha cualquiera; a un año queda {_f(h365['median'], 1, True, True)} contra {_f(h365['random_median'], 1, True, True)}, sin ser concluyente (p = {h365['p']:.2f}).",
+        "<b>Nadie puede predecir el precio de mañana con estos datos.</b> Cinco modelos, incluidas redes neuronales, no superan a decir \"queda igual\". La turbulencia sí se anticipa, y para eso bastan los datos de precio.",
+    ]
+    sum_en = [
+        f"<b>The hack hurt, but it was not alone.</b> Bitcoin fell {_f(-btc_n2['actual'], 1, True)} to 2 November, and the tech sell-off predicts about {_f(-btc_n2_30['explained'], 1, True)} to {_f(-btc_n2['explained'], 1, True)} of that.",
+        f"<b>The price gave the theft away.</b> BNB fell so hard that a simple alarm fired at {d26['alarm'][11:16]} UTC, {d26['minutes_before_admission']:.0f} minutes before CZ admitted it.",
+        "<b>Binance was punished, not the stolen coins.</b> Coins on drained chains did not fall more than the rest; BNB did.",
+        f"<b>There was a run, but an orderly one.</b> Customers took out ${-flows_out:.1f} billion in two days, {_f(-flows_out / pre_assets, 0, True)} of holdings.",
+        f"<b>History shows no clear effect.</b> After 35 earlier hacks, BTC a week later looks like any other date; a year later it stands at {_f(h365['median'], 1, True, True)} against {_f(h365['random_median'], 1, True, True)}, which is not conclusive (p = {h365['p']:.2f}).",
+        "<b>Nobody can predict tomorrow's price with this data.</b> Five models, neural networks included, do not beat saying \"no change\". Turbulence can be anticipated, and price data is enough for that.",
+    ]
+    summary = ('<section class="summary"><h2>' + lab("En 30 segundos", "In 30 seconds") + "</h2>"
+               + '<ul lang="es">' + "".join(f"<li>{_es(x)}</li>" for x in sum_es) + "</ul>"
+               + '<ul lang="en">' + "".join(f"<li>{x}</li>" for x in sum_en) + "</ul></section>")
 
     rows_path = []
     for key, es_l, en_l in [("21:15 CZ post", "21:15, CZ: \"parece un hackeo\"", "21:15, CZ: \"does look like a hack\""),
                             ("00:13 halt", "00:13, retiros suspendidos", "00:13, withdrawals halted"),
                             ("06:00 Nov 1 reopen", "06:00 del 1 nov, reapertura", "06:00 Nov 1, reopening"),
                             ("Nov 2 close", "cierre del 2 nov", "close of Nov 2")]:
-        rows_path.append([f'<span lang="es">{es_l}</span><span lang="en">{en_l}</span>'] +
-                         [_f(P[c][key], 1, True, True) for c in ["BTC", "ETH", "BNB", "XRP", "SOL", "TRX"]])
+        rows_path.append([lab(es_l, en_l)] + [_f(P[c][key], 1, True, True) for c in ["BTC", "ETH", "BNB", "XRP", "SOL", "TRX"]])
     path_tbl = table(["From 20:00 UTC, Oct 29, to", "BTC", "ETH", "BNB", "XRP", "SOL", "TRX"], rows_path,
                      ["Desde las 20:00 UTC del 29 oct hasta", "BTC", "ETH", "BNB", "XRP", "SOL", "TRX"])
 
-    ba = dec[("before_admission", "BTC")]
-    s1 = section(1, "Qué pasó esa noche", "What happened that night",
-                 bi("El primer envío salió de las wallets de Binance en XRP Ledger a las 20:05 UTC. A las 20:20 salieron "
-                    "18.270 BTC y comenzó el barrido de Ethereum. Changpeng Zhao escribió \"parece un hackeo\" a las 21:15 "
-                    "y Binance suspendió retiros a las 00:13. Cinco minutos antes del primer envío había cerrado Nueva York, "
-                    "y Amazon e Intel publicaron resultados que hundieron los futuros del Nasdaq.",
-                    "The first outflow left Binance's XRP Ledger wallets at 20:05 UTC. At 20:20, 18,270 BTC left and the "
-                    "Ethereum sweep began. Changpeng Zhao posted \"does look like a hack\" at 21:15 and Binance halted "
-                    "withdrawals at 00:13. Five minutes before the first outflow New York had closed, and Amazon and "
-                    "Intel published earnings that pushed Nasdaq futures down.")
-                 + fig("binance_impact", "Velas de Binance esa noche: BTC y BNB spot, e interés abierto del perpetuo de BTC.",
-                       "Binance candles that night: BTC and BNB spot, and open interest on the BTC perpetual.")
-                 + fig("binance_history", "BTC y BNB a cuatro escalas: semana, mes, año e historia en Binance. Línea amarilla: el hackeo.",
-                       "BTC and BNB at four zooms: week, month, year and full Binance history. Yellow line: the hack.")
-                 + fig("night", "Precios minuto a minuto desde las 20:00 UTC. Zona gris: sin ninguna declaración todavía.",
-                       "Minute prices from 20:00 UTC. Grey band: no statement from anyone yet.") + path_tbl
-                 + bi("Retornos logarítmicos: se suman entre ventanas y, a estos tamaños, difieren en menos de 0,2 "
-                      "puntos de los cambios porcentuales simples.",
-                      "Log returns: they add up across windows and, at these sizes, are within 0.2 points of simple "
-                      "percentage changes.", "figcaption"))
+    s1 = section(1, "¿Qué pasó esa noche?", "What happened that night?",
+                 ans("A las 20:05 UTC del 29 de octubre empezaron a salir monedas de Binance hacia un atacante. En una hora BNB perdió cerca de 8% y BTC 3%. Binance suspendió los retiros a las 00:13 y reabrió 54 horas después.",
+                     "At 20:05 UTC on 29 October coins began leaving Binance for an attacker. Within an hour BNB had lost about 8% and BTC 3%. Binance halted withdrawals at 00:13 and reopened 54 hours later.")
+                 + fig("binance_impact", "cada vela es 15 minutos: verde sube, roja baja; la mecha es el rango. Las líneas amarillas son los hitos. Abajo, cuánto dinero había apostado en futuros de BTC: cae de golpe cuando la gente cierra posiciones o la liquidan.",
+                       "each candle is 15 minutes: green up, red down; the wick is the range. Yellow lines are the milestones. Below, how much money was committed in BTC futures: it drops suddenly when people close or are liquidated.")
+                 + fig("night", "todas las líneas parten en 0% a las 20:00 UTC, y muestran cuánto subió o bajó cada una desde ahí. La zona gris es el rato en que nadie había dicho nada todavía. La línea gris clara es la bolsa tecnológica: también caía, por los resultados de Amazon e Intel.",
+                       "all lines start at 0% at 20:00 UTC and show how much each rose or fell from there. The grey zone is the time when nobody had said anything yet. The light grey line is tech stocks: also falling, on Amazon's and Intel's earnings.")
+                 + path_tbl)
 
-    s2 = section(2, "¿Hackeo o Nasdaq?", "Hack or Nasdaq?",
-                 bi(_es(f"Ajusté los retornos de 5 minutos de Bitcoin a los futuros del Nasdaq-100, el dólar y el oro en la "
-                        f"semana previa (R² {r['macro_fits']['BTC']['r2']:.2f}) y usé ese ajuste para predecir cada ventana. "
-                        f"Desde las 20:00 del 29 hasta el cierre del 2 de noviembre BTC cayó {_f(-btc_n2['actual'], 1, True)}: "
-                        f"<strong>{_f(btc_n2['explained'], 1, True)} lo predice la caída tecnológica</strong> y "
-                        f"{_f(btc_n2['abnormal'], 1, True)} es anormal (con retornos de 30 minutos: "
-                        f"{_f(btc_n2_30['explained'], 1, True)} y {_f(btc_n2_30['abnormal'], 1, True)}). El efecto propio del "
-                        f"hackeo fue fuerte y corto: {_f(ba['abnormal'], 1, True)} antes de cualquier declaración."),
-                    f"I fitted Bitcoin's five-minute returns on Nasdaq-100 futures, the dollar and gold in the prior week "
-                    f"(R² {r['macro_fits']['BTC']['r2']:.2f}) and used that fit to predict each window. From 20:00 on Oct 29 "
-                    f"to the Nov 2 close BTC fell {_f(-btc_n2['actual'], 1, True)}: <strong>the tech sell-off predicts "
-                    f"{_f(btc_n2['explained'], 1, True)}</strong> and {_f(btc_n2['abnormal'], 1, True)} is abnormal "
-                    f"(with 30-minute returns: {_f(btc_n2_30['explained'], 1, True)} and {_f(btc_n2_30['abnormal'], 1, True)}). "
-                    f"The hack's own effect was sharp and short: {_f(ba['abnormal'], 1, True)} before any statement.")
-                 + fig("decomposition", "Azul: lo que predicen los futuros del Nasdaq, el dólar y el oro. Naranjo: el resto.",
-                       "Blue: what Nasdaq futures, the dollar and gold predict. Orange: the rest."))
+    s2 = section(2, "¿Cayó por el hackeo o por la bolsa?", "Did it fall because of the hack or the stock market?",
+                 ans(f"Por los dos, y más por la bolsa. Justo cuando partió el robo, Amazon e Intel publicaron resultados y las tecnológicas cayeron. De los {_f(-btc_n2['actual'], 1)} puntos que cayó BTC hasta el 2 de noviembre, {_f(-btc_n2_30['explained'], 1)} a {_f(-btc_n2['explained'], 1)} los predice ese mercado; solo {_f(-btc_n2['abnormal'], 1)} a {_f(-btc_n2_30['abnormal'], 1)} son propios del hackeo.",
+                     f"Both, and more the stock market. Just as the theft began, Amazon and Intel published earnings and tech stocks fell. Of the {_f(-btc_n2['actual'], 1)} points BTC fell to 2 November, that market predicts {_f(-btc_n2_30['explained'], 1)} to {_f(-btc_n2['explained'], 1)}; only {_f(-btc_n2['abnormal'], 1)} to {_f(-btc_n2_30['abnormal'], 1)} belong to the hack.")
+                 + fig("decomposition", "gris es lo que BTC habría hecho solo por moverse junto a Nasdaq, dólar y oro, según su relación de la semana previa. Naranjo es el resto, lo propio del hackeo. A la izquierda, la primera hora y cuarto: domina el hackeo. A la derecha, cuatro días después: domina la bolsa, salvo en BNB, que conserva su castigo. ETH terminó mejor de lo esperado.",
+                       "grey is what BTC would have done just by moving with the Nasdaq, dollar and gold, using their relationship in the prior week. Orange is the rest, the hack's own. Left, the first 75 minutes: the hack dominates. Right, four days later: the stock market dominates, except BNB, which keeps its punishment. ETH ended better than expected.")
+                 + bi(f"El modelo explica {_f(r['macro_fits']['BTC']['r2'], 0, True)} de los movimientos de 5 minutos de BTC en una semana tranquila, así que es una aproximación. Antes de cualquier declaración, el efecto propio en BTC fue {_f(ba['abnormal'], 1, True, True)}.",
+                      f"The model explains {_f(r['macro_fits']['BTC']['r2'], 0, True)} of BTC's five-minute moves in a calm week, so it is an approximation. Before any statement, the hack's own effect on BTC was {_f(ba['abnormal'], 1, True, True)}."))
 
-    d26, d19 = det["2026"], det["2019"]
     fb = flow[("before_admission", "BNB")]
-    s3 = section(3, "El mercado lo supo antes que nadie lo dijera", "The market knew before anyone said so",
-                 bi(_es(f"Una alarma simple sobre el retorno de 15 minutos de BNB contra Bitcoin, calibrada para sonar como "
-                        f"máximo una vez al mes (umbral fijado en 60 días y probado en los 30 siguientes, donde dio "
-                        f"{d26['holdout_false_alarms_30d']} falsas alarmas), saltó a las <strong>{d26['alarm'][11:16]} UTC</strong>: "
-                        f"{d26['minutes_after_event']:.0f} minutos después del primer envío y "
-                        f"<strong>{d26['minutes_before_admission']:.0f} minutos antes</strong> del post de CZ. En esos 75 minutos BNB "
-                        f"transó {fb['volume_x_normal']:.0f} veces su volumen normal a esa hora, con "
-                        f"{_f(fb['buy_share'], 0, True)} de compras (normal {_f(fb['normal_buy_share'], 0, True)}). La misma alarma, "
-                        f"sin cambios, sobre el hackeo de Binance de mayo de 2019 saltó a las {d19['alarm'][11:16]}, "
-                        f"{-d19['minutes_before_admission']:.0f} minutos <em>después</em> del anuncio. En 2019 el mercado se enteró por "
-                        f"el anuncio; en 2026, por la blockchain."),
-                    f"A simple alarm on BNB's 15-minute return against Bitcoin, set to fire at most once a month (threshold "
-                    f"fixed on 60 days and checked on the next 30, where it raised {d26['holdout_false_alarms_30d']} false alarms), "
-                    f"went off at <strong>{d26['alarm'][11:16]} UTC</strong>: {d26['minutes_after_event']:.0f} minutes after the "
-                    f"first outflow and <strong>{d26['minutes_before_admission']:.0f} minutes before</strong> CZ's post. In those "
-                    f"75 minutes BNB traded {fb['volume_x_normal']:.0f} times its usual volume for that hour, "
-                    f"{_f(fb['buy_share'], 0, True)} buyer-initiated (normally {_f(fb['normal_buy_share'], 0, True)}). The same "
-                    f"alarm, unchanged, on Binance's May 2019 hack went off at {d19['alarm'][11:16]}, "
-                    f"{-d19['minutes_before_admission']:.0f} minutes <em>after</em> the announcement. In 2019 the market learned "
-                    f"from the announcement; in 2026, from the blockchain.")
-                 + fig("detector", "Puntaje z robusto del movimiento anormal de BNB; línea naranja: umbral de alarma.",
-                       "Robust z-score of BNB's abnormal move; orange line: alarm threshold."))
+    s3 = section(3, "¿El mercado se enteró antes que el público?", "Did the market know before the public?",
+                 ans(f"Sí. El robo se ve en la blockchain, y alguien lo estaba mirando. BNB empezó a caer respecto de BTC antes de cualquier declaración: una alarma simple saltó {d26['minutes_before_admission']:.0f} minutos antes de que CZ lo admitiera. En el hackeo de 2019 pasó lo contrario: saltó {-d19['minutes_before_admission']:.0f} minutos después del anuncio.",
+                     f"Yes. The theft is visible on the blockchain, and someone was watching. BNB began falling against BTC before any statement: a simple alarm fired {d26['minutes_before_admission']:.0f} minutes before CZ admitted it. In the 2019 hack the opposite happened: it fired {-d19['minutes_before_admission']:.0f} minutes after the announcement.")
+                 + fig("detector", "la línea es BNB dividido por BTC: si baja, BNB cae más que el mercado. La zona gris va desde el robo hasta que se admitió. El punto naranjo es cuando sonó la alarma. En 2026 suena dentro de la zona gris, antes de cualquier aviso; en 2019 BNB casi no se movió hasta el anuncio.",
+                       "the line is BNB divided by BTC: when it falls, BNB is falling more than the market. The grey zone runs from the theft until it was admitted. The orange dot is when the alarm rang. In 2026 it rings inside the grey zone, before any notice; in 2019 BNB barely moved until the announcement.")
+                 + bi(f"La alarma está calibrada para sonar como máximo una vez al mes, y en los 30 días previos al hackeo dio {d26['holdout_false_alarms_30d']} falsas alarmas. En esos primeros 75 minutos, BNB transó {fb['volume_x_normal']:.0f} veces su volumen normal.",
+                      f"The alarm is set to ring at most once a month, and it gave {d26['holdout_false_alarms_30d']} false alarms in the 30 days before the hack. In those first 75 minutes, BNB traded {fb['volume_x_normal']:.0f} times its usual volume."))
 
-    tr = svu["to_reopen"]
-    fa = svu["before_admission"]
-    s4 = section(4, "Nadie apostó a que el ladrón vendería", "Nobody bet on the thief dumping the loot",
-                 bi(_es(f"Si el mercado temiera que el atacante vendiera 18.270 BTC o 233 millones de XRP, las monedas de las "
-                        f"cadenas vaciadas habrían caído más. No pasó: hasta la reapertura, su retorno neto de beta por Bitcoin "
-                        f"fue {_f(tr['stolen_mean'], 1, True, True)} en promedio contra {_f(tr['untouched_mean'], 1, True, True)} de "
-                        f"13 monedas grandes de cadenas intactas (permutación p = {tr['p_perm']:.2f}; en los primeros 75 minutos "
-                        f"p = {fa['p_perm']:.2f}, con las robadas cayendo <em>menos</em>). La excepción fue BNB, el token del propio "
-                        f"exchange: {_f(gm['to_reopen']['exchange token'], 1, True, True)}."),
-                    f"If the market had feared the attacker selling 18,270 BTC or 233 million XRP, coins from the drained "
-                    f"chains would have fallen more. They did not: to the reopening, their return net of beta times Bitcoin "
-                    f"averaged {_f(tr['stolen_mean'], 1, True, True)} against {_f(tr['untouched_mean'], 1, True, True)} for 13 large "
-                    f"coins on untouched chains (permutation p = {tr['p_perm']:.2f}; in the first 75 minutes p = "
-                    f"{fa['p_perm']:.2f}, with the stolen coins falling <em>less</em>). The exception was BNB, the exchange's own "
-                    f"token: {_f(gm['to_reopen']['exchange token'], 1, True, True)}.")
-                 + fig("cross_section", "Retorno de cada moneda menos beta por Bitcoin, desde las 20:00 del 29 hasta la reapertura.",
-                       "Each coin's return minus beta times Bitcoin, 20:00 Oct 29 to the reopening."))
+    tr, fa = svu["to_reopen"], svu["before_admission"]
+    btc_c, bnb_c = coins["BTC"], coins["BNB"]
+    s4 = section(4, "¿Qué monedas sufrieron y cuáles ya se recuperaron?", "Which coins suffered, and which have recovered?",
+                 ans(f"Se castigó a BNB, el token de Binance. Las monedas robadas no cayeron más que las otras: el mercado no apostó a que el ladrón vendería. Al {last_day}, ETH y XRP ya superan su precio previo; BTC está a {_f(btc_c['change_to_last'], 1, True, True)}; BNB a {_f(bnb_c['change_to_last'], 1, True, True)}.",
+                     f"BNB, Binance's token, was punished. Stolen coins did not fall more than the others: the market did not bet on the thief selling. As of {last_day}, ETH and XRP are back above their earlier price; BTC stands at {_f(btc_c['change_to_last'], 1, True, True)}; BNB at {_f(bnb_c['change_to_last'], 1, True, True)}.")
+                 + fig("recovery", "el 0% es el precio de cada moneda a las 20:00 UTC, cuando partió el hackeo. El punto rojo es lo peor que llegó a caer y el azul dónde está en el último cierre. Si el azul pasa a la derecha del 0%, ya se recuperó.",
+                       "0% is each coin's price at 20:00 UTC, when the hack began. The red dot is the worst it fell and the blue one where it stands at the last close. If blue is right of 0%, it has recovered.")
+                 + fig("cross_section", "cada punto es una moneda. A la derecha del 0% le fue mejor que a Bitcoin; a la izquierda, peor. Si el mercado temiera que el ladrón vendiera, los puntos azules estarían a la izquierda de los verdes. No lo están.",
+                       "each dot is a coin. Right of 0% it did better than Bitcoin; left, worse. If the market feared the thief selling, the blue dots would sit left of the green ones. They do not.")
+                 + bi(f"Promedio hasta la reapertura: robadas {_f(tr['stolen_mean'], 1, True, True)}, no tocadas {_f(tr['untouched_mean'], 1, True, True)}, BNB {_f(gm['to_reopen']['exchange token'], 1, True, True)}. La diferencia entre robadas y no tocadas no es distinguible del azar (p = {tr['p_perm']:.2f}; en los primeros 75 minutos p = {fa['p_perm']:.2f}). TRX es la rareza: subió 8% durante el hackeo y después lo devolvió todo. No encontré evidencia que lo explique.",
+                      f"Average to the reopening: stolen {_f(tr['stolen_mean'], 1, True, True)}, untouched {_f(tr['untouched_mean'], 1, True, True)}, BNB {_f(gm['to_reopen']['exchange token'], 1, True, True)}. The gap between stolen and untouched cannot be told from chance (p = {tr['p_perm']:.2f}; in the first 75 minutes p = {fa['p_perm']:.2f}). TRX is the oddity: it rose 8% during the hack and then gave it all back. I found no evidence that explains it."))
 
     fs = {(d["coin"], d["size"], d["period"]): d for d in r["flow_size"]}
     small = fs[("BTC", "<1k", "hack_night")]["net_musd"] + fs[("BTC", "1k-10k", "hack_night")]["net_musd"]
-    total = sum(fs[("BTC", s, "hack_night")]["net_musd"] for s in ["<1k", "1k-10k", "10k-100k", "100k-1M", ">1M"]
-                if ("BTC", s, "hack_night") in fs)
-    s5 = section(5, "Quién vendió", "Who sold",
-                 bi(_es(f"Entre las 20:00 y las 06:00 los tomadores vendieron {-total:.0f} millones de dólares más de BTC de los "
-                        f"que compraron en Binance spot. Las órdenes de menos de 10.000 dólares explican {-small:.0f} millones "
-                        f"({_f(small / total, 0, True)}). Ojo: un trade agregado es una orden ejecutada a un precio, y los "
-                        f"algoritmos parten órdenes grandes en pedazos, así que chico no es lo mismo que minorista."),
-                    f"From 20:00 to 06:00 takers sold ${-total:.0f} million more BTC than they bought on Binance spot. Orders "
-                    f"under $10,000 account for ${-small:.0f} million ({_f(small / total, 0, True)}). Caveat: an aggregated trade "
-                    f"is one order filled at one price, and algorithms split large orders, so small is not the same as retail.")
-                 + fig("flow", "Izquierda: flujo neto acumulado de tomadores. Derecha: por tamaño de orden, BTC.",
-                       "Left: cumulative net taker flow. Right: by order size, BTC."))
+    total = sum(fs[("BTC", s, "hack_night")]["net_musd"] for s in ["<1k", "1k-10k", "10k-100k", "100k-1M", ">1M"] if ("BTC", s, "hack_night") in fs)
+    days = [d for d in am["days"] if d["coin"] == "BNB" and d["date"].startswith("2026-10-29")][0]
+    s5 = section(5, "¿Cuánto se transó y quién vendió?", "How much traded, and who sold?",
+                 ans(f"El volumen de BNB fue {_f(days['volume_x_normal'], 1)} veces lo normal el 29 de octubre, y a los dos días ya había vuelto a su nivel. Esa noche se vendieron a mercado {-total:.0f} millones de dólares más de BTC de los que se compraron, y {_f(small / total, 0, True)} vino de órdenes de menos de 10.000 dólares.",
+                     f"BNB's volume was {_f(days['volume_x_normal'], 1)} times normal on 29 October, and two days later it was back at its usual level. That night ${-total:.0f} million more BTC was sold at market than bought, {_f(small / total, 0, True)} of it in orders under $10,000.")
+                 + fig("hack_days", "arriba, cuántas veces el volumen normal se transó cada día: 1 es un día corriente. Abajo, qué parte del volumen la iniciaron compradores apurados: bajo la línea de 50% mandan los vendedores. La línea roja es el hackeo.",
+                       "top, how many times normal volume traded each day: 1 is an ordinary day. Bottom, what share of volume was started by buyers in a hurry: below the 50% line sellers lead. The red line is the hack.")
+                 + fig("flow", "izquierda: si la línea baja, se vende a mercado más de lo que se compra; las líneas claras son una noche normal, casi planas. Derecha: la misma venta de BTC según el tamaño de cada orden. Ojo: los algoritmos parten órdenes grandes, así que chica no significa persona común.",
+                       "left: when the line falls, more is sold at market than bought; pale lines are a normal night, nearly flat. Right: the same BTC selling by size of order. Note: algorithms split large orders, so small does not mean an ordinary person."))
 
     g_btc = gaps[("withdrawals_halted", "BTC vs Coinbase")]["median_bp"]
     g_btc0 = gaps[("week_before", "BTC vs Coinbase")]["median_bp"]
-    s6 = section(6, "Una corrida ordenada", "An orderly run",
-                 bi(_es(f"Valorando cada día el cambio en <em>cantidades</em> de cada moneda en las wallets publicadas de Binance "
-                        f"(DefiLlama) se separan los flujos de los precios: {rf['2026-10-29']['net_flow_bn']:+.2f} mil millones el 29 "
-                        f"(el robo), nada mientras los retiros estuvieron cerrados, y {rf['2026-11-01']['net_flow_bn']:+.2f} y "
-                        f"{rf['2026-11-02']['net_flow_bn']:+.2f} mil millones el 1 y 2 de noviembre: "
-                        f"{_f(-flows_out / pre_assets, 1, True)} de los {pre_assets:.1f} mil millones previos. Durante la "
-                        f"suspensión, BTC en Binance cotizó {g_btc:+.1f} puntos básicos sobre Coinbase (la semana previa "
-                        f"{g_btc0:+.1f}): el mercado valoraba un dólar atrapado en Binance en unos 99,9 centavos."),
-                    f"Valuing each day's change in coin <em>quantities</em> on Binance's published wallets (DefiLlama) separates "
-                    f"flows from prices: ${rf['2026-10-29']['net_flow_bn']:+.2f}B on Oct 29 (the theft), nothing while "
-                    f"withdrawals were halted, then ${rf['2026-11-01']['net_flow_bn']:+.2f}B and ${rf['2026-11-02']['net_flow_bn']:+.2f}B "
-                    f"on Nov 1 and 2: {_f(-flows_out / pre_assets, 1, True)} of the ${pre_assets:.1f}B held before. During the "
-                    f"halt BTC on Binance traded {g_btc:+.1f} basis points above Coinbase ({g_btc0:+.1f} the week before): the "
-                    f"market valued a dollar trapped on Binance at about 99.9 cents.")
-                 + fig("reserve_flows", "Flujo neto diario en las wallets de Binance, sin el efecto de precios.",
-                       "Daily net flow on Binance's wallets, price effect removed.")
-                 + fig("venues", "Diferencia de precio de Binance contra Coinbase (BTC) y OKX (BNB).",
-                       "Binance's price gap to Coinbase (BTC) and OKX (BNB)."))
+    s6 = section(6, "¿Hubo una corrida contra Binance?", "Was there a run on Binance?",
+                 ans(f"Sí, pero ordenada. Al reabrir, los clientes sacaron {-flows_out:.1f} mil millones de dólares en dos días, {_f(-flows_out / pre_assets, 1, True)} de lo que había. Mientras los retiros estuvieron cerrados, Binance quedó apenas {_f(g_btc / 100, 2)}% más caro que Coinbase: el mercado no temió una quiebra.",
+                     f"Yes, but an orderly one. After reopening, customers took out ${-flows_out:.1f} billion in two days, {_f(-flows_out / pre_assets, 1, True)} of holdings. While withdrawals were halted, Binance sat just {_f(g_btc / 100, 2)}% above Coinbase: the market did not fear a collapse.")
+                 + fig("reserve_flows", "cada barra es lo que entró menos lo que salió de las wallets de Binance ese día, sin contar cambios de precio. La naranja es el robo. Las azules son clientes retirando al reabrir. Las grises son días normales.",
+                       "each bar is what came in minus what left Binance's wallets that day, not counting price changes. Orange is the theft. Blue is customers withdrawing after reopening. Grey is normal days.")
+                 + fig("venues", "cuánto más caro está un precio en Binance que en otro exchange. En una crisis grave, como FTX en 2022, esa diferencia se dispara porque un dólar atrapado vale menos. Aquí subió a unos 0,1% y volvió.",
+                       "how much dearer a price is on Binance than on another exchange. In a severe crisis, like FTX in 2022, that gap explodes because a trapped dollar is worth less. Here it rose to about 0.1% and came back.")
+                 + bi(f"Mediana BTC contra Coinbase: {_f(g_btc / 100, 2, False, True)}% con retiros cerrados y {_f(g_btc0 / 100, 2, False, True)}% la semana previa. El flujo del día del robo fue {rf['2026-10-29']['net_flow_bn']:+.2f} mil millones.",
+                      f"Median BTC against Coinbase: {_f(g_btc / 100, 2, False, True)}% with withdrawals halted and {_f(g_btc0 / 100, 2, False, True)}% the week before. The flow on the day of the theft was ${rf['2026-10-29']['net_flow_bn']:+.2f} billion."))
 
-    rows_st = [[s, _f(stocks[s]["ret"], 1, True, True), _f(stocks[s]["abn_vs_qqq_btc"], 1, True, True),
-                f"{stocks[s]['t_stat']:+.1f}"] for s in ["COIN", "HOOD", "MSTR", "CRCL", "IBIT"] if s in stocks]
-    s7 = section(7, "Las acciones cripto", "Crypto stocks",
-                 bi("Con Bitcoin medido de cierre a cierre de Nueva York (el hackeo partió después del cierre del 29, así que cae en "
-                    "la sesión del 30) y un modelo de dos factores ajustado en las 120 sesiones previas, ninguna acción tuvo un "
-                    "movimiento anormal fuera del ruido diario: ni contagio ni fuga hacia el competidor regulado.",
-                    "With Bitcoin measured from one New York close to the next (the hack began after the Oct 29 close, so it "
-                    "falls in the Oct 30 session) and a two-factor model fitted on the prior 120 sessions, no stock moved "
-                    "outside normal daily noise: no contagion, and no flight to the regulated competitor.")
-                 + table(["Stock", "Return Oct 30", "Abnormal", "t"], rows_st, ["Acción", "Retorno 30 oct", "Anormal", "t"])
-                 + fig("stocks", "Retorno anormal del 30 de octubre; barras: rango del 95% de un día normal.",
-                       "Abnormal return on Oct 30; bars: 95% range of a normal day."))
+    rows_st = [[s, _f(stocks[s]["ret"], 1, True, True), _f(stocks[s]["abn_vs_qqq_btc"], 1, True, True), f"{stocks[s]['t_stat']:+.1f}"]
+               for s in ["COIN", "HOOD", "MSTR", "CRCL"]]
+    s7 = section(7, "¿Y las acciones de empresas cripto?", "And the shares of crypto companies?",
+                 ans(f"Cayeron fuerte, pero casi lo esperable: Coinbase perdió {_f(-stocks['COIN']['ret'], 1, True)} un día en que el Nasdaq-100 y Bitcoin también caían. Ni contagio extra ni fuga de clientes hacia el competidor regulado.",
+                     f"They fell hard, but about as expected: Coinbase lost {_f(-stocks['COIN']['ret'], 1, True)} on a day when the Nasdaq-100 and Bitcoin were falling too. No extra contagion, and no flight to the regulated competitor.")
+                 + fig("stocks", "gris es lo que cada acción habría caído solo por su relación habitual con el Nasdaq y Bitcoin. Azul es lo que cayó de verdad. Si las dos barras se parecen, no pasó nada especial.",
+                       "grey is what each share would have fallen just from its usual relationship with the Nasdaq and Bitcoin. Blue is what it really fell. If the two bars look alike, nothing special happened.")
+                 + table(["Stock", "Return Oct 30", "Beyond expected", "t (beyond ±2 is unusual)"], rows_st,
+                         ["Acción", "Retorno 30 oct", "Más allá de lo esperado", "t (más allá de ±2 es inusual)"]))
+
+    def row_h(h, es_l, en_l):
+        d = hz[("all", h)]
+        b = hz.get(("big", h))
+        return [lab(es_l, en_l), _f(d["median"], 1, True, True), _f(d["random_median"], 1, True, True), f"{_f(d['share_up'], 0, True)}",
+                f"{d['p']:.2f}", _f(b["median"], 1, True, True) if b else ""]
+    rows_h = [row_h(7, "1 semana", "1 week"), row_h(30, "1 mes", "1 month"), row_h(90, "3 meses", "3 months"), row_h(365, "1 año", "1 year")]
+    rec = [d for d in am["recovery_hacks"] if d["days_to_recover"] is not None]
+    fast = sum(1 for d in rec if d["days_to_recover"] <= 30)
+    rec_rows = [[d["date"], d["name"], f"{d['amount_m']:,.0f}", f"{d['days_to_recover']:.0f}"] for d in rec]
+    s8 = section(8, "¿Qué pasa una semana, un mes o un año después?", "What happens a week, a month or a year later?",
+                 ans(f"Este hackeo es demasiado reciente para saberlo, pero 35 anteriores sí se pueden medir. A una semana y a un mes, BTC no se distingue de una fecha cualquiera. A un año queda en {_f(h365['median'], 1, True, True)} contra {_f(h365['random_median'], 1, True, True)} de una fecha al azar del mismo año, una brecha grande pero no concluyente (p = {h365['p']:.2f}), y muchos otros eventos caben en un año.",
+                     f"This hack is too recent to tell, but 35 earlier ones can be measured. At a week and a month, BTC cannot be told from any other date. At a year it stands at {_f(h365['median'], 1, True, True)} against {_f(h365['random_median'], 1, True, True)} for a random date of the same year, a large but inconclusive gap (p = {h365['p']:.2f}), and many other events fit in a year.")
+                 + fig("after_hacks", "izquierda: cada línea delgada es BTC después de un hackeo, partiendo del día anterior. La azul gruesa es el caso típico y la naranja este hackeo. Derecha: el retorno típico a cada plazo después de un hackeo (azul) contra fechas al azar del mismo año (gris). Si son parecidas, el hackeo no marcó diferencia.",
+                       "left: each thin line is BTC after a hack, starting from the day before. The thick blue is the typical case and orange this hack. Right: the typical return at each horizon after a hack (blue) against random dates of the same year (grey). If they look alike, the hack made no difference.")
+                 + table(["Horizon", "After a hack (median)", "Random date, same year", "Share that rose", "p (under 0.05 is clear)", "Only hacks of $250M+"], rows_h,
+                         ["Plazo", "Tras un hackeo (mediana)", "Fecha al azar, mismo año", "Parte que subió", "p (bajo 0,05 es claro)", "Solo hackeos de US$250 M+"])
+                 + fig("binance_history", "los mismos BTC y BNB a cuatro distancias: semana, mes, año y toda su historia en Binance. La línea amarilla es el hackeo. De cerca parece un derrumbe; en la historia completa, un punto más.",
+                       "the same BTC and BNB at four distances: week, month, year and their full Binance history. The yellow line is the hack. Up close it looks like a collapse; over the full history, one more point.")
+                 + bi(f"¿Cuánto tardó BTC en volver al precio previo tras los grandes hackeos? En {fast} de {len(rec)} casos, menos de un mes. Las excepciones (Mt. Gox 2014 y BitMart 2021) coinciden con mercados bajistas largos.",
+                      f"How long did BTC take to regain its earlier price after the big hacks? In {fast} of {len(rec)} cases, under a month. The exceptions (Mt. Gox 2014 and BitMart 2021) coincide with long bear markets.")
+                 + table(["Date", "Exchange", "Stolen, $M", "Days to recover"], rec_rows, ["Fecha", "Exchange", "Robado, US$ M", "Días en recuperar"]))
 
     b = es_btc["binance_2026"]
-    s8 = section(8, "Quince años de hackeos", "Fifteen years of hacks",
-                 bi(_es(f"En los {es_btc['n_events']} hackeos a exchanges centralizados de 30 millones de dólares o más desde 2011, el "
-                        f"retorno anormal estandarizado de Bitcoin en el día del incidente y el siguiente promedia "
-                        f"{es_btc['mean_scar_1']:+.2f} (placebo p = {es_btc['p_mean_scar_1']:.2f}); la mitad son negativos. Este "
-                        f"hackeo es el {b['rank_among_hacks']}° de {es_btc['n_events']} ({_f(b['car_1'], 1, True, True)} anormal en dos "
-                        f"días), un movimiento que igualan o superan el {_f(b['pct_of_all_days'], 1, True)} de todas las ventanas "
-                        f"de dos días. 2026 ya es el peor año registrado: {hy[2026]['stolen_bn']:.2f} mil millones robados al 2 de "
-                        f"noviembre."),
-                    f"Across the {es_btc['n_events']} centralized-exchange hacks of $30 million or more since 2011, Bitcoin's "
-                    f"standardized abnormal return over the incident day and the next averages {es_btc['mean_scar_1']:+.2f} "
-                    f"(placebo p = {es_btc['p_mean_scar_1']:.2f}); half are negative. This hack ranks {b['rank_among_hacks']} of "
-                    f"{es_btc['n_events']} ({_f(b['car_1'], 1, True, True)} abnormal over two days), a move matched or exceeded by "
-                    f"{_f(b['pct_of_all_days'], 1, True)} of all two-day windows. 2026 is already the worst year on record: "
-                    f"${hy[2026]['stolen_bn']:.2f}B stolen to Nov 2.")
-                 + fig("event_study", "Cada punto es un hackeo; zona gris: 90% de las ventanas de dos días al azar.",
-                       "Each dot is a hack; grey band: 90% of random two-day windows.")
-                 + fig("history", "Bitcoin desde 2011 y cada hackeo a un exchange de 100 millones o más; abajo, lo robado por año.",
-                       "Bitcoin since 2011 and every exchange hack of $100M or more; below, money stolen per year."))
+    s9 = section(9, "¿Cómo se ve esto año por año?", "How does this look year by year?",
+                 ans(f"2026 ya es el peor año registrado en robos, con {hy[2026]['stolen_bn']:.2f} mil millones de dólares, y Binance es la mayor parte. Aun así, en {es_btc['n_events']} hackeos a exchanges desde 2011 el efecto promedio sobre Bitcoin no se distingue del azar (p = {es_btc['p_mean_scar_1']:.2f}). Este es el {b['rank_among_hacks']}° mayor de esos {es_btc['n_events']}.",
+                     f"2026 is already the worst year on record for theft, with ${hy[2026]['stolen_bn']:.2f} billion, and Binance is most of it. Even so, across {es_btc['n_events']} exchange hacks since 2011 the average effect on Bitcoin cannot be told from chance (p = {es_btc['p_mean_scar_1']:.2f}). This one ranks {b['rank_among_hacks']} of those {es_btc['n_events']}.")
+                 + fig("annual", "arriba, cuánto subió o bajó cada moneda cada año. Al medio, cuánto se transó en Binance, solo pares contra USDT. Abajo, qué parte iniciaron compradores: cerca de 50% quiere decir equilibrio.",
+                       "top, how much each coin rose or fell each year. Middle, how much traded on Binance, USDT pairs only. Bottom, what share buyers started: near 50% means balance.")
+                 + fig("history", "arriba, el precio de Bitcoin desde 2011 en escala logarítmica, donde un mismo salto vertical es un mismo porcentaje. Cada punto naranjo es un gran hackeo, más grande cuanto más se robó. Abajo, lo robado cada año.",
+                       "top, Bitcoin's price since 2011 on a log scale, where the same vertical jump is the same percentage. Each orange dot is a big hack, larger the more was stolen. Below, what was stolen each year.")
+                 + fig("event_study", "cada punto es un hackeo: más a la derecha, más dinero robado; más abajo, más cayó Bitcoin en esos dos días. La zona gris es lo que Bitcoin hace normalmente sin ningún hackeo.",
+                       "each dot is a hack: further right, more money stolen; lower, the more Bitcoin fell over those two days. The grey zone is what Bitcoin normally does with no hack at all."))
 
-    s9 = section(9, "¿Había tendencia alcista?", "Was there an uptrend?",
-                 bi(_es(f"El 28 de octubre BTC cerró en {trend['close']:,.0f} dólares. Había subido "
-                        f"{_f(trend['ret_q3'], 0, True)} en el tercer trimestre (promedio de 50 días {trend['sma50']:,.0f} sobre el de "
-                        f"200, {trend['sma200']:,.0f}), pero en octubre ya iba {_f(trend['ret_oct_to_eve'], 1, True)}, en el año "
-                        f"{_f(trend['ret_ytd'], 1, True)} y {_f(-trend['drawdown_from_2026_high'], 0, True)} bajo su máximo de enero. El "
-                        f"repunte fue real, pero se había frenado antes del hackeo, con el Brent sobre 110 dólares por la guerra "
-                        f"con Irán y la tasa a 10 años de EE.UU. cerca de 5%."),
-                    f"On Oct 28 BTC closed at ${trend['close']:,.0f}. It had gained {_f(trend['ret_q3'], 0, True)} in the third "
-                    f"quarter (50-day average {trend['sma50']:,.0f} above the 200-day, {trend['sma200']:,.0f}), but it was already "
-                    f"{_f(trend['ret_oct_to_eve'], 1, True)} in October, {_f(trend['ret_ytd'], 1, True)} for the year and "
-                    f"{_f(-trend['drawdown_from_2026_high'], 0, True)} below its January high. The rally was real but had stalled "
-                    f"before the hack, with Brent above $110 because of the war with Iran and the US 10-year yield near 5%.")
-                 + fig("context_2026", "2026: Bitcoin, Brent, tasa a 10 años e índice de riesgo geopolítico.",
-                       "2026: Bitcoin, Brent, the 10-year yield and the geopolitical risk index."))
+    s10 = section(10, "¿De verdad venía subiendo? La guerra y la macro", "Was it really rising? The war and the macro",
+                  ans(f"A medias. BTC subió {_f(trend['ret_q3'], 0, True)} en el tercer trimestre, pero justo antes del hackeo ya iba {_f(trend['ret_oct_to_eve'], 1, True, True)} en octubre y {_f(-trend['drawdown_from_2026_high'], 0, True)} bajo su máximo de enero. El ambiente ya era duro: guerra con Irán, Brent sobre 110 dólares y la tasa a 10 años de EE.UU. cerca de 5%.",
+                      f"Partly. BTC rose {_f(trend['ret_q3'], 0, True)} in the third quarter, but just before the hack it was already {_f(trend['ret_oct_to_eve'], 1, True, True)} in October and {_f(-trend['drawdown_from_2026_high'], 0, True)} below its January high. The backdrop was already harsh: war with Iran, Brent above $110 and the US 10-year yield near 5%.")
+                  + fig("context_2026", "cuatro paneles con la misma línea de tiempo. Las líneas verticales marcan los hitos. El índice geopolítico cuenta noticias de guerra y terrorismo en diez diarios: mientras más alto, más tensión. Ojo: BTC cayó de 97 mil a 63 mil en enero y febrero, antes de la guerra.",
+                        "four panels on one timeline. Vertical lines mark the milestones. The geopolitical index counts war and terrorism news in ten newspapers: higher means more tension. Note: BTC fell from 97k to 63k in January and February, before the war."))
 
-    # ---------------------------------------------------------------- models
-    lg, rg, ml = y1[("all", "lgb")], y1[("all", "ridge")], y1.get(("all", "mlp"))
-    vl = vs[("all", "lgb")]
-    abl_rows = []
-    names = {"derivatives": ("financiamiento de futuros", "futures funding"),
-             "macro_markets": ("bolsa, tasas, dólar, petróleo", "stocks, rates, dollar, oil"),
-             "war_policy_news": ("índices de guerra y política", "war and policy news indices"),
-             "sentiment_attention": ("Fear & Greed, Wikipedia", "Fear & Greed, Wikipedia"),
-             "onchain_supply": ("hash rate, stablecoins, reservas", "hash rate, stablecoins, reserves"),
-             "hacks": ("registro de hackeos", "hack register")}
-    for g, (es_n, en_n) in names.items():
-        a1, a2 = abl.get(("y1", g)), abl.get(("rv7_fwd", g))
-        if a1 and a2:
-            abl_rows.append([f'<span lang="es">{es_n}</span><span lang="en">{en_n}</span>',
-                             _f(-a1["add_to_price_mse_change"], 1, True, True),
-                             _f(-a2["add_to_price_mse_change"], 1, True, True)])
-    s10 = section(10, "¿Se puede predecir el precio con las noticias?", "Can the news forecast the price?",
-                  bi(_es(f"Panel diario de 5 monedas desde 2019 con 65 variables en 8 grupos (precio y volumen, futuros, bolsa y "
-                         f"tasas, índices de guerra y política, sentimiento, on-chain, hackeos, calendario), cada una con el rezago "
-                         f"con que se publica. Reentrenado cada mes de 2022 a 2026 con lo conocido hasta ese día. "
-                         f"<strong>Ningún modelo le gana a predecir \"sin cambio\" para el retorno de mañana</strong>: R² fuera de "
-                         f"muestra {_f(lg['r2_vs_zero'], 2, True)} LightGBM, {_f(rg['r2_vs_zero'], 2, True)} ridge"
-                         + (f", {_f(ml['r2_vs_zero'], 2, True)} MLP" if ml else "") +
-                         f"; aciertan la dirección {_f(lg['hit_rate'], 1, True)} a {_f(rg['hit_rate'], 1, True)} de los días. "
-                         f"<strong>La volatilidad de la semana siguiente sí se predice</strong>: LightGBM explica "
-                         f"{_f(vl['r2'], 0, True)} de su varianza y reduce el error del modelo HAR en "
-                         f"{_f(vl['r2_vs_har'], 0, True)} (Diebold-Mariano p = {vl['dm_p']:.3f}). Las bandas de 90% cubren "
-                         f"{_f(cov1['all']['cover_conformal_90'], 1, True)} de los días."),
-                     f"Daily panel of 5 coins since 2019 with 65 features in 8 groups (price and volume, futures, stocks and "
-                     f"rates, war and policy indices, sentiment, on-chain, hacks, calendar), each lagged as it is published. "
-                     f"Refitted every month from 2022 to 2026 on what was known that day. <strong>No model beats predicting "
-                     f"\"no change\" for tomorrow's return</strong>: out-of-sample R² {_f(lg['r2_vs_zero'], 2, True)} LightGBM, "
-                     f"{_f(rg['r2_vs_zero'], 2, True)} ridge" + (f", {_f(ml['r2_vs_zero'], 2, True)} MLP" if ml else "") +
-                     f"; they get the direction right on {_f(lg['hit_rate'], 1, True)} to {_f(rg['hit_rate'], 1, True)} of days. "
-                     f"<strong>Next week's volatility is predictable</strong>: LightGBM explains {_f(vl['r2'], 0, True)} of its "
-                     f"variance and cuts the HAR model's error by {_f(vl['r2_vs_har'], 0, True)} (Diebold-Mariano p = "
-                     f"{vl['dm_p']:.3f}). The 90% bands cover {_f(cov1['all']['cover_conformal_90'], 1, True)} of days.")
-                  + bi(_es(f"También entrené un GRU sobre los últimos 20 días, con al menos 100 épocas por reentrenamiento y "
-                           f"early stopping y checkpoint desde la época 100. No mejora: R² {_f(r['gru']['y1']['r2_vs_zero'], 1, True)} "
-                           f"a un día y {_f(r['gru']['y7']['r2_vs_zero'], 1, True)} a 7 días; en volatilidad "
-                           f"{_f(r['gru']['vol']['r2'], 1, True)} contra {_f(r['gru']['vol']['r2_har'], 1, True)} de HAR."),
-                       f"I also trained a GRU over the last 20 days, with at least 100 epochs per refit and early stopping "
-                       f"and checkpointing from epoch 100. It does not help: R² {_f(r['gru']['y1']['r2_vs_zero'], 1, True)} at one "
-                       f"day and {_f(r['gru']['y7']['r2_vs_zero'], 1, True)} at 7 days; for volatility "
-                       f"{_f(r['gru']['vol']['r2'], 1, True)} against {_f(r['gru']['vol']['r2_har'], 1, True)} for HAR.")
-                  + fig("skill", "R² fuera de muestra, 2022-2026. Izquierda: retornos contra \"sin cambio\". Derecha: volatilidad.",
-                        "Out-of-sample R², 2022-2026. Left: returns against \"no change\". Right: volatility.")
-                  + (table(["Feature group added to price data", "Next-day return error", "Next-week volatility error"],
-                           abl_rows, ["Grupo agregado a los datos de precio", "Error retorno de mañana",
-                                      "Error volatilidad semana"]) if abl_rows else "")
-                  + (fig("ablation", "Cambio en el error al agregar cada grupo a los datos de precio (positivo = ayuda).",
-                         "Change in error when each group is added to price data (positive = helps).") if abl_rows else ""))
+    lg, rg, ml, vl, vh = y1[("all", "lgb")], y1[("all", "ridge")], y1[("all", "mlp")], vs[("all", "lgb")], vs[("all", "har")]
+    s11 = section(11, "¿Se puede predecir el precio con noticias y machine learning?", "Can news and machine learning predict the price?",
+                  ans("El precio de mañana, no. Probé cinco modelos con 65 variables, incluida la guerra y las noticias, reentrenados de 2022 a 2026 sin mirar el futuro: ninguno le gana a decir \"queda igual\". La turbulencia de la próxima semana sí se anticipa en parte, y para eso basta la volatilidad pasada.",
+                      "Tomorrow's price, no. I tried five models with 65 features, including war and news, refitted from 2022 to 2026 without looking ahead: none beats saying \"no change\". Next week's turbulence can be partly anticipated, and past volatility alone is enough for that.")
+                  + fig("skill", "izquierda: en qué parte de los días cada modelo acertó si el precio subía o bajaba; 50% es lanzar una moneda. Derecha: qué parte de la variación de la turbulencia anticipa cada uno; la barra verde solo usa volatilidad pasada y las azules no la superan con claridad.",
+                        "left: on what share of days each model got up or down right; 50% is flipping a coin. Right: what share of the variation in turbulence each one anticipates; the green bar uses past volatility only and the blue ones do not clearly beat it.")
+                  + fig("ablation", "parto de un modelo solo con precio y volumen y le agrego un grupo de datos. A la derecha el error baja; a la izquierda sube. Casi todo queda a la izquierda: lo que traen las noticias ya está en el precio.",
+                        "I start from a model with price and volume only and add one group of data. To the right the error falls; to the left it rises. Nearly everything sits left: what the news brings is already in the price.")
+                  + table(["Target", "Benchmark", "LightGBM", "Ridge", "MLP", "GRU (100+ epochs)"], [
+                      [lab("Retorno mañana (R²)", "Next-day return (R²)"), lab("0% = \"queda igual\"", "0% = \"no change\""), _f(lg["r2_vs_zero"], 1, True), _f(rg["r2_vs_zero"], 1, True), _f(ml["r2_vs_zero"], 1, True), _f(gru["y1"]["r2_vs_zero"], 1, True)],
+                      [lab("Retorno 7 días (R²)", "7-day return (R²)"), lab("0% = \"queda igual\"", "0% = \"no change\""), _f(y7[("all", "lgb")]["r2_vs_zero"], 1, True), _f(y7[("all", "ridge")]["r2_vs_zero"], 1, True), "", _f(gru["y7"]["r2_vs_zero"], 1, True)],
+                      [lab("Turbulencia semana (R²)", "Next-week turbulence (R²)"), "HAR " + _f(vh["r2"], 1, True), _f(vl["r2"], 1, True), _f(vs[("all", "ridge")]["r2"], 1, True), _f(vs[("all", "mlp")]["r2"], 1, True), _f(gru["vol"]["r2"], 1, True)],
+                  ], ["Objetivo", "Referencia", "LightGBM", "Ridge", "MLP", "GRU (100+ épocas)"])
+                  + bi(f"El GRU entrena al menos 100 épocas por ciclo, con early stopping desde ahí, y su mejor punto queda casi siempre pegado a la época 100 (mediana {gru['y1']['best_epoch_median']:.0f}): entrenar más no agrega nada. LightGBM mejora a HAR en {_f(vl['r2_vs_har'], 1, True)}, sin significancia (p = {vl['dm_p']:.2f}). Una estrategia de comprar o salir según el modelo pierde contra mantener en las cinco monedas.",
+                       f"The GRU trains at least 100 epochs per cycle, with early stopping from there, and its best point nearly always sits at epoch 100 (median {gru['y1']['best_epoch_median']:.0f}): more training adds nothing. LightGBM beats HAR by {_f(vl['r2_vs_har'], 1, True)}, not significantly (p = {vl['dm_p']:.2f}). A strategy of buying or leaving on the model's signal loses to holding on all five coins."))
+
+    test = {}
+    for d in sc["backtest"]:
+        test.setdefault(d["horizon"], []).append(d["coverage_90"])
+    cov = {h: sum(v) / len(v) for h, v in test.items()}
+    above = {}
+    for d in sc["backtest"]:
+        above.setdefault(d["horizon"], []).append(d["share_above_median"])
+    above_avg = sum(sum(v) / len(v) for v in above.values()) / len(above)
+    fan = {(d["coin"], d["horizon"]): d for d in sc["fan"]}
+    srows = []
+    for c in ["BTC", "ETH", "BNB", "XRP", "SOL"]:
+        f = lambda h: f'{_px(fan[(c, h)]["p05"])} - {_px(fan[(c, h)]["p95"])}'  # noqa: E731
+        srows.append([c, _px(fan[(c, 7)]["last"]), f(7), f(30), f(90), f(365), _f(fan[(c, 30)]["prob_above_prehack"], 0, True)])
+    s12 = section(12, "¿Hacia dónde puede ir el precio?", "Where can the price go?",
+                  ans(f"No hay un número confiable, pero sí un rango. Con los movimientos históricos de BTC, a un mes lo más probable es entre {_px(fan[('BTC', 30)]['p05'])} y {_px(fan[('BTC', 30)]['p95'])} dólares, y a un año entre {_px(fan[('BTC', 365)]['p05'])} y {_px(fan[('BTC', 365)]['p95'])}. La amplitud es la conclusión: a esos plazos, casi cualquier cosa es posible.",
+                      f"There is no reliable number, but there is a range. Using BTC's historical moves, at a month the likely range is ${_px(fan[('BTC', 30)]['p05'])} to ${_px(fan[('BTC', 30)]['p95'])}, and at a year ${_px(fan[('BTC', 365)]['p05'])} to ${_px(fan[('BTC', 365)]['p95'])}. The width is the conclusion: at those horizons, almost anything is possible.")
+                  + fig("scenarios", "la línea azul es el precio real hasta el último cierre. Los abanicos son miles de futuros posibles armados con pedazos de movimientos históricos de la propia moneda, sin agregar tendencia al alza ni a la baja. Azul oscuro: 5 de cada 10 caminos. Azul claro: 9 de cada 10. La línea naranja es el precio cuando partió el hackeo.",
+                        "the blue line is the real price to the last close. The fans are thousands of possible futures built from pieces of the coin's own historical moves, with no upward or downward trend added. Dark blue: 5 of 10 paths. Light blue: 9 of 10. The orange line is the price when the hack began.")
+                  + table(["Coin", "Last close", "7 days (90%)", "1 month (90%)", "3 months (90%)", "1 year (90%)", "Chance above pre-hack price in 1 month"], srows,
+                          ["Moneda", "Último cierre", "7 días (90%)", "1 mes (90%)", "3 meses (90%)", "1 año (90%)", "Prob. sobre precio pre-hackeo en 1 mes"])
+                  + bi(f"¿Se puede confiar en estos rangos? Lo probé desde cada inicio de mes desde 2020, usando solo datos anteriores. El rango de 90% acertó {_f(cov[7], 0, True)} a 7 días, {_f(cov[30], 0, True)} a un mes, {_f(cov[90], 0, True)} a tres meses y {_f(cov[365], 0, True)} a un año. Como no agrega tendencia, en ese período el precio terminó sobre la mediana {_f(above_avg, 0, True)} de las veces: es un poco pesimista cuando el mercado sube. A un año, esos resultados se solapan, así que hay pocos casos realmente independientes.",
+                       f"Can these ranges be trusted? I tested them from every month-start since 2020, using only earlier data. The 90% range held {_f(cov[7], 0, True)} at 7 days, {_f(cov[30], 0, True)} at a month, {_f(cov[90], 0, True)} at three months and {_f(cov[365], 0, True)} at a year. Since it adds no trend, the price ended above the median {_f(above_avg, 0, True)} of the time in that period: a little pessimistic when the market rises. At a year those results overlap, so there are few truly independent cases."))
 
     nrows = []
     for d in sorted(now["forecast"], key=lambda x: (x["coin"], x["horizon"])):
-        nrows.append([d["coin"], f'{d["horizon"]}d', d["target_date"][:10], _px(d["last_close"]),
-                      _px(d["p05"]), _px(d["p50"]), _px(d["p95"])])
-    s11 = section(11, "El pronóstico de hoy", "Today's forecast",
-                  bi(f"Mismos modelos, reentrenados con todo lo resuelto hasta el {now['asof']}, aplicados al último día. Es una "
-                     f"banda, no una apuesta: la sección anterior muestra que la mediana no le gana a \"sin cambio\".",
-                     f"The same models, refitted on everything resolved up to {now['asof']}, applied to the last day. It is a "
-                     f"band, not a bet: the previous section shows the median does not beat \"no change\".")
-                  + table(["Coin", "Horizon", "Date", "Last close", "5%", "Median", "95%"], nrows,
-                          ["Moneda", "Horizonte", "Fecha", "Último cierre", "5%", "Mediana", "95%"])
-                  + fig("nowcast", "Últimos 45 días y banda de 90% para 1 y 7 días.", "Last 45 days and the 90% band for 1 and 7 days."))
-
-    s12 = ""
+        nrows.append([d["coin"], f'{d["horizon"]}d', d["target_date"][:10], _px(d["last_close"]), _px(d["p05"]), _px(d["p50"]), _px(d["p95"])])
+    tb = ""
     track_path = REPORTS / "track.json"
+    t = None
     if track_path.exists():
         t = json.loads(track_path.read_text(encoding="utf-8"))
         trows = []
         for d in sorted(t["rows"], key=lambda x: (x["horizon"], x["coin"])):
             if d["close"] is None:
-                state = ('<span lang="es">pendiente</span><span lang="en">pending</span>', "", "", "")
+                state = (lab("pendiente", "pending"), "", "", "")
             else:
-                inside = ('<span lang="es">dentro</span><span lang="en">inside</span>' if d["inside_90"]
-                          else '<span lang="es">fuera</span><span lang="en">outside</span>')
+                inside = lab("dentro", "inside") if d["inside_90"] else lab("fuera", "outside")
                 state = (f'{_px(d["close"])} <small>({d.get("source") or "binance"})</small>', inside,
-                         _f(d["median_error"], 1, True, True),
-                         _f(d["no_change_error"], 1, True, True))
+                         _f(d["median_error"], 1, True, True), _f(d["no_change_error"], 1, True, True))
             trows.append([d["coin"], f'{d["horizon"]}d', d["target_date"], f'{_px(d["p05"])} - {_px(d["p95"])}', *state])
-        s12 = section(12, "¿Cómo le fue al pronóstico?", "How did the forecast do?",
-                      bi(f"Cada día GitHub Actions baja los cierres publicados y los compara con el pronóstico congelado del "
-                         f"{t['asof']}. Revisado el {t['checked']}: {t['resolved']} resueltos, {t['inside_90']} dentro de la banda de 90%. "
-                         f"Error = cierre real contra la mediana, al lado del error de predecir \"sin cambio\".",
-                         f"Every day GitHub Actions fetches the published closes and compares them with the forecast frozen on "
-                         f"{t['asof']}. Checked {t['checked']}: {t['resolved']} resolved, {t['inside_90']} inside the 90% band. "
-                         f"Error = actual close against the median, next to the error of predicting \"no change\".")
-                      + table(["Coin", "Horizon", "Date", "90% band", "Close", "Band", "Median error", "No-change error"],
-                              trows, ["Moneda", "Horizonte", "Fecha", "Banda 90%", "Cierre", "Banda", "Error mediana",
-                                      "Error sin cambio"]))
+        tb = (bi(f"Cada día GitHub Actions compara este pronóstico congelado del {t['asof']} con los cierres publicados. Revisado el {t['checked']}: {t['resolved']} resueltos, {t['inside_90']} dentro de la banda de 90%.",
+                 f"Every day GitHub Actions compares this forecast, frozen on {t['asof']}, with the published closes. Checked {t['checked']}: {t['resolved']} resolved, {t['inside_90']} inside the 90% band.")
+              + table(["Coin", "Horizon", "Date", "90% band", "Close", "Band", "Error vs median", "Error vs \"no change\""], trows,
+                      ["Moneda", "Horizonte", "Fecha", "Banda 90%", "Cierre", "Banda", "Error contra mediana", "Error contra \"sin cambio\""]))
+    s13 = section(13, "¿Cómo le va al pronóstico de corto plazo?", "How is the short-term forecast doing?",
+                  ans(f"Lo congelé con datos al {now['asof']} para poder revisarlo honestamente. Sus medianas son casi \"queda igual\", así que lo útil es la banda: históricamente contuvo {_f(cov1['all']['cover_conformal_90'], 0, True)} de los movimientos a un día y {_f(cov7['all']['cover_conformal_90'], 0, True)} a 7 días. No vio venir el hackeo, y ninguna de las cinco monedas quedó dentro de la banda ese día.",
+                      f"I froze it with data to {now['asof']} so it can be checked honestly. Its medians are almost \"no change\", so what is useful is the band: historically it contained {_f(cov1['all']['cover_conformal_90'], 0, True)} of one-day moves and {_f(cov7['all']['cover_conformal_90'], 0, True)} of 7-day ones. It did not see the hack coming, and none of the five coins stayed inside its band that day.")
+                  + fig("nowcast", "la línea es el precio y la zona azul el rango de 90% para los próximos 1 y 7 días; la línea punteada es la mediana.",
+                        "the line is the price and the blue zone the 90% range for the next 1 and 7 days; the dotted line is the median.")
+                  + table(["Coin", "Horizon", "Date", "Last close", "5%", "Median", "95%"], nrows,
+                          ["Moneda", "Horizonte", "Fecha", "Último cierre", "5%", "Mediana", "95%"]) + tb)
 
-    body = s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12
+    gl = [("Hot wallet", "billetera conectada a internet con la que el exchange paga retiros.", "wallet connected to the internet that the exchange uses to pay withdrawals."),
+          ("Vela", "resume un período: apertura, cierre, máximo y mínimo.", "summarizes a period: open, close, high and low."),
+          ("Futuros perpetuos", "contratos para apostar al precio sin comprar la moneda, sin fecha de vencimiento.", "contracts to bet on the price without buying the coin, with no expiry."),
+          ("Interés abierto", "total de dinero apostado en futuros en ese momento.", "total money committed in futures at that moment."),
+          ("Orden a mercado", "compra o venta apurada, al mejor precio disponible en ese momento.", "a hurried buy or sell, at the best price available right then."),
+          ("Mediana", "el valor del medio: la mitad de los casos queda arriba y la mitad abajo.", "the middle value: half the cases are above and half below."),
+          ("p", "probabilidad de ver una diferencia así solo por azar; bajo 0,05 se suele considerar clara.", "the chance of seeing such a gap by luck alone; under 0.05 is usually considered clear."),
+          ("R²", "qué parte de la variación anticipa un modelo. Negativo: lo hace peor que la referencia.", "what share of the variation a model anticipates. Negative: worse than the benchmark."),
+          ("HAR", "modelo simple que anticipa la turbulencia solo con la del último día, semana y mes.", "a simple model that anticipates turbulence using only that of the last day, week and month."),
+          ("Banda de 90%", "rango donde debería caer el precio 9 de cada 10 veces.", "the range the price should land in 9 times out of 10."),
+          ("Walk-forward", "reentrenar cada período solo con lo conocido hasta entonces, sin mirar el futuro.", "refitting each period on only what was known by then, without looking ahead."),
+          ("Época", "una pasada completa de la red neuronal por los datos de entrenamiento.", "one full pass of the neural network over the training data."),
+          ("Early stopping", "detener el entrenamiento cuando deja de mejorar sobre datos que no usó para aprender.", "stopping training when it no longer improves on data it did not learn from.")]
+    gloss = ('<section><h2>' + lab("Glosario", "Glossary") + "</h2><dl>"
+             + "".join(f'<dt>{n}</dt><dd lang="es">{_es(e)}</dd><dd lang="en">{en}</dd>' for n, e, en in gl) + "</dl></section>")
+
+    body = s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + gloss
     tpl = (ROOT / "src" / "bhack" / "site_template.html").read_text(encoding="utf-8")
-    page = tpl.replace("{{STATS}}", stat_html).replace("{{BODY}}", body)
+    page = tpl.replace("{{STATS}}", stat_html).replace("{{SUMMARY}}", summary).replace("{{BODY}}", body)
     (ROOT / "docs" / "index.html").write_text(page, encoding="utf-8")
     (ROOT / "docs" / ".nojekyll").write_text("", encoding="utf-8")
     return page

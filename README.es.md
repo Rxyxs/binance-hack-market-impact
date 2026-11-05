@@ -26,11 +26,11 @@ Todo corre con datos públicos que no piden clave de API, y cada cifra de abajo 
 
 ## Qué pasó
 
-![Velas de Binance](docs/img/binance_impact.png)
+![Velas de Binance](docs/img/es/binance_impact.png)
 
-![Semana, mes, año, historia](docs/img/binance_history.png)
+![Semana, mes, año, historia](docs/img/es/binance_history.png)
 
-![Minuto a minuto](docs/img/night.png)
+![Minuto a minuto](docs/img/es/night.png)
 
 | Desde las 20:00 UTC del 29 oct hasta... | BTC | ETH | BNB | Futuros Nasdaq-100 |
 |---|---|---|---|---|
@@ -52,7 +52,7 @@ explicados, -1,7 anormales). El efecto propio del hackeo fue fuerte y corto: -1,
 cualquier declaración, otros -1,5 mientras el exchange lo admitía, y luego +1,7 de vuelta en las
 primeras seis horas de la suspensión de retiros.
 
-![¿Hackeo o Nasdaq?](docs/img/decomposition.png)
+![¿Hackeo o Nasdaq?](docs/img/es/decomposition.png)
 
 **2. El mercado lo supo antes de que Binance dijera nada.** Una alarma simple sobre el retorno de
 15 minutos de BNB contra Bitcoin, calibrada para sonar como máximo una vez al mes (umbral fijado en 60
@@ -63,7 +63,7 @@ iniciadas por el comprador (lo normal es 50%). La misma alarma, sin cambios, sob
 de mayo de 2019 (7.000 BTC) saltó a las 23:48, **14 minutos después** del anuncio del exchange. En 2019
 el mercado se enteró por el anuncio; en 2026, por la blockchain.
 
-![Detector](docs/img/detector.png)
+![Detector](docs/img/es/detector.png)
 
 **3. Se castigó al token del propio Binance. Nadie apostó a que el ladrón vendería.** Si el
 mercado hubiera temido que el atacante vendiera 18.270 BTC o 233 millones de XRP (tres días de volumen
@@ -73,7 +73,7 @@ puntos** en promedio contra **+3,2** de 13 monedas grandes cuyas cadenas no se t
 0,81; en los primeros 75 minutos p = 0,17, con las robadas cayendo *menos*). BNB fue la excepción con
 -2,1 puntos, y el 2 de noviembre seguía en -1,7. TRX subió 8% durante el hackeo y después lo devolvió todo.
 
-![Corte transversal](docs/img/cross_section.png)
+![Corte transversal](docs/img/es/cross_section.png)
 
 **4. La venta vino en órdenes chicas.** Entre las 20:00 y las 06:00, los tomadores vendieron 176
 millones de dólares más de BTC de los que compraron en Binance spot, contra un flujo casi equilibrado
@@ -82,7 +82,7 @@ en las siete noches previas. Las órdenes de menos de 10.000 dólares explican 1
 agregado es una orden ejecutada a un precio, y los algoritmos parten órdenes grandes en pedazos, así
 que chico no es lo mismo que minorista.
 
-![Flujo de órdenes](docs/img/flow.png)
+![Flujo de órdenes](docs/img/es/flow.png)
 
 **5. Una corrida contra el exchange, pero ordenada.** DefiLlama sigue las monedas en las wallets
 que Binance publica. Valorando el cambio diario en *cantidades* de cada moneda al precio de ese día
@@ -96,7 +96,7 @@ Binance quedaron **entre 3 y 10 puntos básicos sobre** Coinbase y OKX (mediana 
 +8,6 pb, contra +0,9 la semana previa): el mercado valoraba un dólar atrapado en Binance en unos
 99,9 centavos.
 
-![Flujos](docs/img/reserve_flows.png)
+![Flujos](docs/img/es/reserve_flows.png)
 
 **6. Las acciones cripto cayeron más o menos lo que su exposición predecía.** Con Bitcoin medido de un
 cierre de Nueva York al siguiente (-4,95% para la sesión del 30 de octubre, porque el hackeo partió
@@ -106,7 +106,7 @@ sesiones previas deja a Coinbase en -3,3% anormal (t = -1,2), Robinhood -0,9%, C
 tampoco fuga hacia el competidor regulado. Medir Bitcoin de medianoche a medianoche habría mostrado
 un -6,7% falso para Coinbase.
 
-![Acciones](docs/img/stocks.png)
+![Acciones](docs/img/es/stocks.png)
 
 **7. Quince años de hackeos a exchanges: sin efecto promedio sobre Bitcoin, y este solo destaca
 por tamaño.** En los 36 hackeos a exchanges centralizados de 30 millones de dólares o más del registro
@@ -116,7 +116,15 @@ Binance es el 3° de 36 (-5,5% anormal en dos días, -1,96 desviaciones), un mov
 superan el 3,5% de todas las ventanas de dos días. El tamaño del robo casi no predice la reacción
 (correlación -0,22).
 
-![Estudio de eventos](docs/img/event_study.png)
+![Estudio de eventos](docs/img/es/event_study.png)
+
+**El después: una semana, un mes y un año.** Este hackeo es muy reciente para medirlo a esos plazos, pero 35
+anteriores sí se pueden medir contra fechas al azar del mismo año. A una semana y a un mes BTC no se distingue
+de una fecha cualquiera; a un año queda -10,9% contra +15,6%, sin ser concluyente (p = 0,12).
+
+![Después de un hackeo](docs/img/es/after_hacks.png)
+
+![Recuperación](docs/img/es/recovery.png)
 
 **8. ¿De verdad había tendencia alcista?** El 28 de octubre Bitcoin cerró en 81.344 dólares. Había
 subido 43% en el tercer trimestre (su promedio de 50 días, 81.943, estaba sobre el de 200, 73.111), pero
@@ -124,7 +132,7 @@ en octubre ya iba -2,7%, en el año -7,2% y **16% bajo su máximo de enero** de 
 estaba en 115 dólares después de ocho meses de guerra en el Golfo y la tasa a 10 años de EE.UU. cerca de
 5%. El repunte fue real, pero se había frenado antes del hackeo.
 
-![2026](docs/img/context_2026.png)
+![2026](docs/img/es/context_2026.png)
 
 **9. ¿Puede el machine learning pronosticar el precio con las noticias?** **El precio no, y las noticias no aportan nada.** Armé un panel diario de BTC, ETH, BNB, XRP y SOL desde 2019 con 65 variables en ocho grupos: precio y volumen, financiamiento de futuros, bolsa, tasas, dólar y petróleo, índices de noticias de guerra y política (riesgo geopolítico, incertidumbre de política), sentimiento y atención (Fear & Greed, Wikipedia), oferta on-chain (hash rate, stablecoins, reservas de Binance), el registro de hackeos y el calendario, cada una con el rezago con que se publica. Cada mes, de enero de 2022 a noviembre de 2026, ridge, LightGBM, LightGBM por cuantiles y una red MLP se reentrenaron con lo conocido ese día y pronosticaron el mes siguiente: 8.830 días-moneda.
 
@@ -134,7 +142,7 @@ estaba en 115 dólares después de ocho meses de guerra en el Golfo y la tasa a 
 | Retorno a 7 días | "sin cambio" | R² LightGBM -2,0%, ridge -3,8% |
 | Volatilidad de la semana siguiente | HAR (último día, semana y mes) | HAR explica 19,3% de la volatilidad en logaritmo; LightGBM 20,3%, 1,2% menos error, Diebold-Mariano p = 0,28 |
 
-![Capacidad predictiva](docs/img/skill.png)
+![Capacidad predictiva](docs/img/es/skill.png)
 
 - Una estrategia de comprar o quedarse fuera según el signo de LightGBM perdió contra mantener en las cinco monedas (BTC -48% contra +61% manteniendo, con 10 pb por cambio).
 - La MLP entrenó al menos 100 épocas en cada reentrenamiento trimestral y guardó su mejor checkpoint de validación. En retornos ese checkpoint siempre estuvo entre la época 1 y la 10 (mediana 1): lo que aprendía después de las primeras épocas era ruido.
@@ -142,7 +150,7 @@ estaba en 115 dólares después de ocho meses de guerra en el Golfo y la tasa a 
 - Agregando un grupo a la vez a precio y volumen (reentrenamiento trimestral), ningún grupo mueve el error de mañana en más de 0,7%. En volatilidad, **cada grupo de noticias empeora el pronóstico**: bolsa y tasas +4,2%, on-chain +3,5%, registro de hackeos +3,2%, sentimiento +2,7%, índices de guerra y política +2,4% más error; solo el financiamiento de futuros ayuda (-0,3%). Lo que la guerra y las noticias le hicieron a los precios ya estaba en los precios cuando salieron los índices.
 - Las bandas de 90% son honestas en promedio (cubrieron 89,2% de los movimientos de un día y 86,2% de los de 7 días) y no vieron venir el hackeo: para el 29 de octubre la banda de BTC era -3,0% a +3,7% y cayó 4,1%; la de BNB -3,2% a +4,2% y cayó 8,1%. Las cinco monedas cerraron bajo su banda.
 
-![Ablación](docs/img/ablation.png)
+![Ablación](docs/img/es/ablation.png)
 
 **10. El pronóstico de hoy.** Reentrenados con todo lo resuelto al cierre del 2 de noviembre de 2026 y aplicados a ese día:
 
@@ -156,7 +164,13 @@ estaba en 115 dólares después de ocho meses de guerra en el Golfo y la tasa a 
 
 Las medianas son "sin cambio", como dice la evaluación que deben ser; la información está en el ancho de la banda. El modelo de volatilidad espera más turbulencia que en los últimos 30 días para BTC, ETH y SOL. En su descomposición TreeSHAP dominan las variables de precio y volumen; los índices de guerra y política y el registro de hackeos mueven el pronóstico menos de 0,01 en volatilidad logarítmica cada uno. Una GitHub Action compara este pronóstico con cada nuevo cierre diario; el registro está en la [página](https://rxyxs.github.io/binance-hack-market-impact/).
 
-![Pronóstico](docs/img/nowcast.png)
+![Pronóstico](docs/img/es/nowcast.png)
+
+**11. Hacia dónde puede ir el precio.** Rangos armados con pedazos de los movimientos históricos de cada moneda,
+sin agregar tendencia. No es una predicción: BTC a un mes 67.752 - 97.839 y a un año 37.696 - 173.735 dólares (90%). Probado desde
+cada mes desde 2020 con datos anteriores, el rango de 90% acertó 84% a 7 días y 88% a un año.
+
+![Escenarios](docs/img/es/scenarios.png)
 
 ## Por año
 
@@ -177,7 +191,9 @@ Bitcoin en Binance spot (solo el par BTCUSDT; Binance también lista BTC contra 
 
 Dinero robado en cripto por año (registro de hackeos de DefiLlama, todos los objetivos):
 
-![Historia](docs/img/history.png)
+![Historia](docs/img/es/history.png)
+
+![Año por año](docs/img/es/annual.png)
 
 2026 ya es el peor año registrado con **8.780 millones de dólares** al 2 de noviembre, 6.820 millones de
 ellos en exchanges centralizados; el hackeo a Binance es 72% del año.

@@ -12,8 +12,8 @@ import json
 import numpy as np
 import pandas as pd
 
-from . import (annual, candles, datasets, deep, detector, eventstudy, figures, forecast, intraday, nowcast,
-               snapshot)
+from . import (aftermath, annual, datasets, deep, detector, eventstudy, figures, forecast, intraday, nowcast,
+               scenarios, snapshot)
 from .config import REPORTS
 
 
@@ -38,6 +38,17 @@ def _records(df: pd.DataFrame) -> list[dict]:
     return _clean(df.to_dict(orient="records"))
 
 
+def aftermath_results() -> dict:
+    a = aftermath.run()
+    return _clean({k: _records(a[k].assign(date=a[k]["date"].astype(str))) if k == "days" else _records(a[k])
+                   for k in ["horizons", "recovery_hacks", "coins", "volatility", "days"]})
+
+
+def scenario_results() -> dict:
+    a = scenarios.run()
+    return {k: _records(a[k]) for k in ["fan", "backtest"]}
+
+
 def main(with_nn: bool = True) -> dict:
     datasets.build_all()
 
@@ -49,9 +60,7 @@ def main(with_nn: bool = True) -> dict:
     now = nowcast.run()
 
     w = intraday.closes()
-    gaps = intraday.venue_gaps(w)
     flows = intraday.reserve_flows()
-    nq = intraday.macro_minutes()["NQ=F"]
     results = {
         "trend_before_hack": ann["trend"],
         "coin_years": _records(ann["coin_years"]),
@@ -89,38 +98,12 @@ def main(with_nn: bool = True) -> dict:
                     "vol_drivers": _clean(now["vol_drivers"].to_dict(orient="index"))},
     }
     results["gru"] = deep.summary()
-    candles.build()
+    results["aftermath"] = aftermath_results()
+    results["scenarios"] = scenario_results()
     results = _clean(results)
     (REPORTS / "results.json").write_text(json.dumps(results, indent=1, allow_nan=False), encoding="utf-8")
 
-    # figures
-    figures.night(w, nq)
-    figures.decomposition(intr["macro"]["decomposition"])
-    figures.cross_section(intr["abnormal"])
-    a, b = intraday.T0, pd.Timestamp("2026-10-30 06:00", tz="UTC")
-    mins = {c: intraday.taker_minutes(c, a, b) for c in ["BTC", "BNB"]}
-    base = {}
-    for c in ["BTC", "BNB"]:
-        nights = [intraday.taker_minutes(c, a - pd.Timedelta(days=k), b - pd.Timedelta(days=k))["net"]
-                  .cumsum().reset_index(drop=True) / 1e6 for k in range(1, 8)]
-        base[c] = pd.concat(nights, axis=1).mean(axis=1)
-    figures.flow(mins, base, intr["flow_size"])
-    figures.venues(gaps)
-    btc_r = eventstudy.btc_daily_returns()
-    _, allvals = eventstudy.placebo(btc_r, 5, pd.DatetimeIndex([]), draws=10)
-    figures.event_study(es["BTC"]["table"], allvals)
-    figures.history(eventstudy.btc_daily_close(), datasets.hacks(), ann["hacks_by_year"])
-    figures.reserve_flows(flows)
-    mac = datasets.macro_daily()
-    btc_close = datasets.daily_prices().query("coin == 'BTC'").set_index("time")["close"]
-    btc_close.index = btc_close.index.tz_localize(None)
-    figures.context_2026(btc_close, mac["BZ=F"], mac["^TNX"], mac["GPRD"])
-    figures.detector_traces(det)
-    figures.skill(fc["y1_scores"], fc["y7_scores"], fc["vol_scores"])
-    if "ablation" in fc:
-        figures.ablation(fc["ablation"])
-    figures.nowcast({c: s.loc["2026-08-01":] for c, s in now["history"].items()}, now["forecast"])
-    figures.stocks(intr["stocks"])
+    figures.render_all(results)
 
     from . import site
     site.build(results)
