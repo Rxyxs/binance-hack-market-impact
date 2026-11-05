@@ -26,6 +26,10 @@ Todo corre con datos públicos que no piden clave de API, y cada cifra de abajo 
 
 ## Qué pasó
 
+![Velas de Binance](docs/img/binance_impact.png)
+
+![Semana, mes, año, historia](docs/img/binance_history.png)
+
 ![Minuto a minuto](docs/img/night.png)
 
 | Desde las 20:00 UTC del 29 oct hasta... | BTC | ETH | BNB | Futuros Nasdaq-100 |

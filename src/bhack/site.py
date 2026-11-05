@@ -117,6 +117,10 @@ def build(r: dict) -> str:
                     "Ethereum sweep began. Changpeng Zhao posted \"does look like a hack\" at 21:15 and Binance halted "
                     "withdrawals at 00:13. Five minutes before the first outflow New York had closed, and Amazon and "
                     "Intel published earnings that pushed Nasdaq futures down.")
+                 + fig("binance_impact", "Velas de Binance esa noche: BTC y BNB spot, e interés abierto del perpetuo de BTC.",
+                       "Binance candles that night: BTC and BNB spot, and open interest on the BTC perpetual.")
+                 + fig("binance_history", "BTC y BNB a cuatro escalas: semana, mes, año e historia en Binance. Línea amarilla: el hackeo.",
+                       "BTC and BNB at four zooms: week, month, year and full Binance history. Yellow line: the hack.")
                  + fig("night", "Precios minuto a minuto desde las 20:00 UTC. Zona gris: sin ninguna declaración todavía.",
                        "Minute prices from 20:00 UTC. Grey band: no statement from anyone yet.") + path_tbl
                  + bi("Retornos logarítmicos: se suman entre ventanas y, a estos tamaños, difieren en menos de 0,2 "
