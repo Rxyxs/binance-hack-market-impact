@@ -9224,5 +9224,1027 @@
    "best_epoch_median": 100.0,
    "best_epoch_max": 130
   }
+ },
+ "aftermath": {
+  "horizons": [
+   {
+    "group": "all",
+    "horizon": 7,
+    "n": 35,
+    "median": 0.005335,
+    "share_up": 0.514286,
+    "random_median": 0.001548,
+    "p": 0.779
+   },
+   {
+    "group": "all",
+    "horizon": 30,
+    "n": 35,
+    "median": -0.02282,
+    "share_up": 0.428571,
+    "random_median": 0.004044,
+    "p": 0.3175
+   },
+   {
+    "group": "all",
+    "horizon": 90,
+    "n": 34,
+    "median": -0.02394,
+    "share_up": 0.470588,
+    "random_median": -0.014936,
+    "p": 0.8895
+   },
+   {
+    "group": "all",
+    "horizon": 365,
+    "n": 33,
+    "median": -0.108561,
+    "share_up": 0.484848,
+    "random_median": 0.156398,
+    "p": 0.12
+   },
+   {
+    "group": "big",
+    "horizon": 7,
+    "n": 7,
+    "median": -0.021653,
+    "share_up": 0.285714,
+    "random_median": -0.00229,
+    "p": 0.5325
+   },
+   {
+    "group": "big",
+    "horizon": 30,
+    "n": 7,
+    "median": -0.081638,
+    "share_up": 0.285714,
+    "random_median": -0.008099,
+    "p": 0.2645
+   },
+   {
+    "group": "big",
+    "horizon": 90,
+    "n": 6,
+    "median": 0.002325,
+    "share_up": 0.5,
+    "random_median": -0.055529,
+    "p": 0.6595
+   },
+   {
+    "group": "big",
+    "horizon": 365,
+    "n": 6,
+    "median": 0.110835,
+    "share_up": 0.5,
+    "random_median": 0.132866,
+    "p": 0.937
+   }
+  ],
+  "recovery_hacks": [
+   {
+    "date": "2014-02-07",
+    "name": "Mt. Gox",
+    "amount_m": 470.0,
+    "days_to_recover": 861.0
+   },
+   {
+    "date": "2018-01-26",
+    "name": "Coincheck",
+    "amount_m": 534.0,
+    "days_to_recover": 2.0
+   },
+   {
+    "date": "2018-02-12",
+    "name": "BitGrail",
+    "amount_m": 170.0,
+    "days_to_recover": 0.0
+   },
+   {
+    "date": "2018-04-21",
+    "name": "Gate",
+    "amount_m": 235.0,
+    "days_to_recover": 1.0
+   },
+   {
+    "date": "2020-09-29",
+    "name": "KuCoin",
+    "amount_m": 281.0,
+    "days_to_recover": 0.0
+   },
+   {
+    "date": "2021-12-04",
+    "name": "BitMart",
+    "amount_m": 196.0,
+    "days_to_recover": 815.0
+   },
+   {
+    "date": "2022-11-12",
+    "name": "FTX",
+    "amount_m": 450.0,
+    "days_to_recover": 19.0
+   },
+   {
+    "date": "2023-11-10",
+    "name": "Poloniex",
+    "amount_m": 126.0,
+    "days_to_recover": 0.0
+   },
+   {
+    "date": "2024-05-31",
+    "name": "DMM Bitcoin",
+    "amount_m": 305.0,
+    "days_to_recover": 4.0
+   },
+   {
+    "date": "2024-07-18",
+    "name": "WazirX: India",
+    "amount_m": 234.9,
+    "days_to_recover": 2.0
+   },
+   {
+    "date": "2025-02-21",
+    "name": "Bybit",
+    "amount_m": 1400.0,
+    "days_to_recover": 77.0
+   },
+   {
+    "date": "2025-04-20",
+    "name": "Bitget",
+    "amount_m": 100.0,
+    "days_to_recover": 0.0
+   },
+   {
+    "date": "2026-09-24",
+    "name": "Bitget",
+    "amount_m": 387.0,
+    "days_to_recover": 1.0
+   },
+   {
+    "date": "2026-10-29",
+    "name": "Binance",
+    "amount_m": 6360.0,
+    "days_to_recover": null
+   }
+  ],
+  "coins": [
+   {
+    "coin": "BTC",
+    "price_at_hack": 80848.64,
+    "low": 76331.2,
+    "low_time": "2026-10-30 18:52:00+00:00",
+    "low_change": -0.055875,
+    "last_close": 80504.01,
+    "last_day": "2026-11-04",
+    "change_to_last": -0.004263,
+    "recovered": false
+   },
+   {
+    "coin": "BNB",
+    "price_at_hack": 744.89,
+    "low": 684.06,
+    "low_time": "2026-10-30 00:29:00+00:00",
+    "low_change": -0.081663,
+    "last_close": 719.99,
+    "last_day": "2026-11-04",
+    "change_to_last": -0.033428,
+    "recovered": false
+   },
+   {
+    "coin": "ETH",
+    "price_at_hack": 2336.89,
+    "low": 2181.24,
+    "low_time": "2026-10-30 01:31:00+00:00",
+    "low_change": -0.066606,
+    "last_close": 2424.61,
+    "last_day": "2026-11-04",
+    "change_to_last": 0.037537,
+    "recovered": true
+   },
+   {
+    "coin": "XRP",
+    "price_at_hack": 1.2823,
+    "low": 1.2032,
+    "low_time": "2026-10-30 01:31:00+00:00",
+    "low_change": -0.061686,
+    "last_close": 1.3052,
+    "last_day": "2026-11-04",
+    "change_to_last": 0.017859,
+    "recovered": true
+   },
+   {
+    "coin": "SOL",
+    "price_at_hack": 99.82,
+    "low": 91.0,
+    "low_time": "2026-11-02 19:47:00+00:00",
+    "low_change": -0.088359,
+    "last_close": 95.61,
+    "last_day": "2026-11-04",
+    "change_to_last": -0.042176,
+    "recovered": false
+   }
+  ],
+  "volatility": [
+   {
+    "coin": "BTC",
+    "range_before": 0.024785,
+    "range_since": 0.032492,
+    "days_since": 7
+   },
+   {
+    "coin": "BNB",
+    "range_before": 0.027244,
+    "range_since": 0.046923,
+    "days_since": 7
+   },
+   {
+    "coin": "ETH",
+    "range_before": 0.036167,
+    "range_since": 0.042937,
+    "days_since": 7
+   },
+   {
+    "coin": "XRP",
+    "range_before": 0.040879,
+    "range_since": 0.045211,
+    "days_since": 7
+   },
+   {
+    "coin": "SOL",
+    "range_before": 0.041066,
+    "range_since": 0.054458,
+    "days_since": 7
+   }
+  ],
+  "days": [
+   {
+    "date": "2026-10-20",
+    "coin": "BTC",
+    "close": 83028.15,
+    "volume_bn": 1.147168,
+    "volume_x_normal": 0.885831,
+    "buy_share": 0.534905,
+    "range_pct": 0.027574
+   },
+   {
+    "date": "2026-10-21",
+    "coin": "BTC",
+    "close": 84093.42,
+    "volume_bn": 1.388742,
+    "volume_x_normal": 1.06526,
+    "buy_share": 0.491635,
+    "range_pct": 0.027382
+   },
+   {
+    "date": "2026-10-22",
+    "coin": "BTC",
+    "close": 81416.09,
+    "volume_bn": 1.600912,
+    "volume_x_normal": 1.270695,
+    "buy_share": 0.452379,
+    "range_pct": 0.042472
+   },
+   {
+    "date": "2026-10-23",
+    "coin": "BTC",
+    "close": 81189.43,
+    "volume_bn": 1.016623,
+    "volume_x_normal": 0.811934,
+    "buy_share": 0.506596,
+    "range_pct": 0.019225
+   },
+   {
+    "date": "2026-10-24",
+    "coin": "BTC",
+    "close": 80888.16,
+    "volume_bn": 0.942004,
+    "volume_x_normal": 0.7702,
+    "buy_share": 0.464043,
+    "range_pct": 0.025156
+   },
+   {
+    "date": "2026-10-25",
+    "coin": "BTC",
+    "close": 80154.09,
+    "volume_bn": 0.503776,
+    "volume_x_normal": 0.419093,
+    "buy_share": 0.480933,
+    "range_pct": 0.014877
+   },
+   {
+    "date": "2026-10-26",
+    "coin": "BTC",
+    "close": 80150.56,
+    "volume_bn": 1.230994,
+    "volume_x_normal": 1.053772,
+    "buy_share": 0.568706,
+    "range_pct": 0.018597
+   },
+   {
+    "date": "2026-10-27",
+    "coin": "BTC",
+    "close": 80909.77,
+    "volume_bn": 1.062257,
+    "volume_x_normal": 0.89519,
+    "buy_share": 0.59598,
+    "range_pct": 0.022564
+   },
+   {
+    "date": "2026-10-28",
+    "coin": "BTC",
+    "close": 81343.5,
+    "volume_bn": 1.062453,
+    "volume_x_normal": 0.889155,
+    "buy_share": 0.582004,
+    "range_pct": 0.017735
+   },
+   {
+    "date": "2026-10-29",
+    "coin": "BTC",
+    "close": 77991.89,
+    "volume_bn": 1.905695,
+    "volume_x_normal": 1.594854,
+    "buy_share": 0.487461,
+    "range_pct": 0.052124
+   },
+   {
+    "date": "2026-10-30",
+    "coin": "BTC",
+    "close": 77368.77,
+    "volume_bn": 1.883011,
+    "volume_x_normal": 1.57587,
+    "buy_share": 0.470166,
+    "range_pct": 0.032466
+   },
+   {
+    "date": "2026-10-31",
+    "coin": "BTC",
+    "close": 77582.02,
+    "volume_bn": 0.487228,
+    "volume_x_normal": 0.407756,
+    "buy_share": 0.615311,
+    "range_pct": 0.008844
+   },
+   {
+    "date": "2026-11-01",
+    "coin": "BTC",
+    "close": 78354.0,
+    "volume_bn": 0.51016,
+    "volume_x_normal": 0.426947,
+    "buy_share": 0.519601,
+    "range_pct": 0.011675
+   },
+   {
+    "date": "2026-11-02",
+    "coin": "BTC",
+    "close": 76816.0,
+    "volume_bn": 0.983243,
+    "volume_x_normal": 0.822865,
+    "buy_share": 0.560175,
+    "range_pct": 0.028329
+   },
+   {
+    "date": "2026-11-03",
+    "coin": "BTC",
+    "close": 77453.86,
+    "volume_bn": 0.969414,
+    "volume_x_normal": 0.811292,
+    "buy_share": 0.491417,
+    "range_pct": 0.02192
+   },
+   {
+    "date": "2026-11-04",
+    "coin": "BTC",
+    "close": 80504.01,
+    "volume_bn": 1.747283,
+    "volume_x_normal": 1.462281,
+    "buy_share": 0.540403,
+    "range_pct": 0.072087
+   },
+   {
+    "date": "2026-10-20",
+    "coin": "BNB",
+    "close": 741.69,
+    "volume_bn": 0.066587,
+    "volume_x_normal": 0.743071,
+    "buy_share": 0.457743,
+    "range_pct": 0.024828
+   },
+   {
+    "date": "2026-10-21",
+    "coin": "BNB",
+    "close": 746.31,
+    "volume_bn": 0.081177,
+    "volume_x_normal": 0.914331,
+    "buy_share": 0.468167,
+    "range_pct": 0.016178
+   },
+   {
+    "date": "2026-10-22",
+    "coin": "BNB",
+    "close": 731.28,
+    "volume_bn": 0.073552,
+    "volume_x_normal": 0.877312,
+    "buy_share": 0.405269,
+    "range_pct": 0.033254
+   },
+   {
+    "date": "2026-10-23",
+    "coin": "BNB",
+    "close": 739.59,
+    "volume_bn": 0.105621,
+    "volume_x_normal": 1.298642,
+    "buy_share": 0.375249,
+    "range_pct": 0.027941
+   },
+   {
+    "date": "2026-10-24",
+    "coin": "BNB",
+    "close": 740.0,
+    "volume_bn": 0.085112,
+    "volume_x_normal": 1.069283,
+    "buy_share": 0.431299,
+    "range_pct": 0.032772
+   },
+   {
+    "date": "2026-10-25",
+    "coin": "BNB",
+    "close": 738.69,
+    "volume_bn": 0.061178,
+    "volume_x_normal": 0.77299,
+    "buy_share": 0.492243,
+    "range_pct": 0.018045
+   },
+   {
+    "date": "2026-10-26",
+    "coin": "BNB",
+    "close": 742.88,
+    "volume_bn": 0.075385,
+    "volume_x_normal": 0.969314,
+    "buy_share": 0.466239,
+    "range_pct": 0.020507
+   },
+   {
+    "date": "2026-10-27",
+    "coin": "BNB",
+    "close": 744.94,
+    "volume_bn": 0.081327,
+    "volume_x_normal": 1.033588,
+    "buy_share": 0.556856,
+    "range_pct": 0.027517
+   },
+   {
+    "date": "2026-10-28",
+    "coin": "BNB",
+    "close": 759.85,
+    "volume_bn": 0.094496,
+    "volume_x_normal": 1.185347,
+    "buy_share": 0.492659,
+    "range_pct": 0.027224
+   },
+   {
+    "date": "2026-10-29",
+    "coin": "BNB",
+    "close": 698.46,
+    "volume_bn": 0.414026,
+    "volume_x_normal": 5.193514,
+    "buy_share": 0.467155,
+    "range_pct": 0.119118
+   },
+   {
+    "date": "2026-10-30",
+    "coin": "BNB",
+    "close": 704.42,
+    "volume_bn": 0.248015,
+    "volume_x_normal": 3.111081,
+    "buy_share": 0.428369,
+    "range_pct": 0.05852
+   },
+   {
+    "date": "2026-10-31",
+    "coin": "BNB",
+    "close": 703.95,
+    "volume_bn": 0.052858,
+    "volume_x_normal": 0.663048,
+    "buy_share": 0.462613,
+    "range_pct": 0.01723
+   },
+   {
+    "date": "2026-11-01",
+    "coin": "BNB",
+    "close": 712.69,
+    "volume_bn": 0.069586,
+    "volume_x_normal": 0.872889,
+    "buy_share": 0.489043,
+    "range_pct": 0.022028
+   },
+   {
+    "date": "2026-11-02",
+    "coin": "BNB",
+    "close": 699.25,
+    "volume_bn": 0.081314,
+    "volume_x_normal": 1.019993,
+    "buy_share": 0.418635,
+    "range_pct": 0.032042
+   },
+   {
+    "date": "2026-11-03",
+    "coin": "BNB",
+    "close": 698.14,
+    "volume_bn": 0.065279,
+    "volume_x_normal": 0.818851,
+    "buy_share": 0.505898,
+    "range_pct": 0.016829
+   },
+   {
+    "date": "2026-11-04",
+    "coin": "BNB",
+    "close": 719.99,
+    "volume_bn": 0.132998,
+    "volume_x_normal": 1.668316,
+    "buy_share": 0.506882,
+    "range_pct": 0.062696
+   }
+  ]
+ },
+ "scenarios": {
+  "fan": [
+   {
+    "coin": "BTC",
+    "horizon": 7,
+    "asof": "2026-11-04",
+    "last": 80504.01,
+    "p05": 74843.963569,
+    "p25": 78210.922134,
+    "p50": 80264.945914,
+    "p75": 82608.042007,
+    "p95": 87522.056092,
+    "prob_above_prehack": 0.42725
+   },
+   {
+    "coin": "BTC",
+    "horizon": 30,
+    "asof": "2026-11-04",
+    "last": 80504.01,
+    "p05": 67752.48624,
+    "p25": 75128.217213,
+    "p50": 80348.206423,
+    "p75": 86536.890709,
+    "p95": 97838.538267,
+    "prob_above_prehack": 0.47725
+   },
+   {
+    "coin": "BTC",
+    "horizon": 90,
+    "asof": "2026-11-04",
+    "last": 80504.01,
+    "p05": 57701.853968,
+    "p25": 70186.975824,
+    "p50": 80263.742203,
+    "p75": 92265.378122,
+    "p95": 113135.826475,
+    "prob_above_prehack": 0.487
+   },
+   {
+    "coin": "BTC",
+    "horizon": 180,
+    "asof": "2026-11-04",
+    "last": 80504.01,
+    "p05": 47565.621718,
+    "p25": 64779.55495,
+    "p50": 79879.500904,
+    "p75": 98590.582472,
+    "p95": 134852.61989,
+    "prob_above_prehack": 0.4835
+   },
+   {
+    "coin": "BTC",
+    "horizon": 365,
+    "asof": "2026-11-04",
+    "last": 80504.01,
+    "p05": 37696.220342,
+    "p25": 58401.99138,
+    "p50": 80020.701975,
+    "p75": 111241.195341,
+    "p95": 173735.07603,
+    "prob_above_prehack": 0.49125
+   },
+   {
+    "coin": "BNB",
+    "horizon": 7,
+    "asof": "2026-11-04",
+    "last": 719.99,
+    "p05": 655.31719,
+    "p25": 698.032692,
+    "p50": 719.485695,
+    "p75": 744.611635,
+    "p95": 791.04715,
+    "prob_above_prehack": 0.246
+   },
+   {
+    "coin": "BNB",
+    "horizon": 30,
+    "asof": "2026-11-04",
+    "last": 719.99,
+    "p05": 584.709056,
+    "p25": 668.02882,
+    "p50": 721.380903,
+    "p75": 778.314236,
+    "p95": 885.610192,
+    "prob_above_prehack": 0.38225
+   },
+   {
+    "coin": "BNB",
+    "horizon": 90,
+    "asof": "2026-11-04",
+    "last": 719.99,
+    "p05": 495.939716,
+    "p25": 617.14383,
+    "p50": 721.53019,
+    "p75": 838.288403,
+    "p95": 1055.487285,
+    "prob_above_prehack": 0.4405
+   },
+   {
+    "coin": "BNB",
+    "horizon": 180,
+    "asof": "2026-11-04",
+    "last": 719.99,
+    "p05": 402.807801,
+    "p25": 572.686074,
+    "p50": 716.598654,
+    "p75": 897.697312,
+    "p95": 1260.517935,
+    "prob_above_prehack": 0.456
+   },
+   {
+    "coin": "BNB",
+    "horizon": 365,
+    "asof": "2026-11-04",
+    "last": 719.99,
+    "p05": 323.154217,
+    "p25": 515.851869,
+    "p50": 714.056201,
+    "p75": 1005.672874,
+    "p95": 1615.499698,
+    "prob_above_prehack": 0.46725
+   },
+   {
+    "coin": "ETH",
+    "horizon": 7,
+    "asof": "2026-11-04",
+    "last": 2424.61,
+    "p05": 2197.512181,
+    "p25": 2342.717729,
+    "p50": 2424.472275,
+    "p75": 2509.140333,
+    "p95": 2674.264742,
+    "prob_above_prehack": 0.7655
+   },
+   {
+    "coin": "ETH",
+    "horizon": 30,
+    "asof": "2026-11-04",
+    "last": 2424.61,
+    "p05": 1935.629659,
+    "p25": 2216.384065,
+    "p50": 2425.617261,
+    "p75": 2656.096472,
+    "p95": 3088.760009,
+    "prob_above_prehack": 0.6125
+   },
+   {
+    "coin": "ETH",
+    "horizon": 90,
+    "asof": "2026-11-04",
+    "last": 2424.61,
+    "p05": 1554.756194,
+    "p25": 2031.199841,
+    "p50": 2413.612671,
+    "p75": 2911.569868,
+    "p95": 3771.976562,
+    "prob_above_prehack": 0.5475
+   },
+   {
+    "coin": "ETH",
+    "horizon": 180,
+    "asof": "2026-11-04",
+    "last": 2424.61,
+    "p05": 1218.594937,
+    "p25": 1819.600857,
+    "p50": 2418.542818,
+    "p75": 3176.268506,
+    "p95": 4806.280066,
+    "prob_above_prehack": 0.53775
+   },
+   {
+    "coin": "ETH",
+    "horizon": 365,
+    "asof": "2026-11-04",
+    "last": 2424.61,
+    "p05": 869.614166,
+    "p25": 1611.018783,
+    "p50": 2461.206134,
+    "p75": 3716.070772,
+    "p95": 6510.380303,
+    "prob_above_prehack": 0.52975
+   },
+   {
+    "coin": "XRP",
+    "horizon": 7,
+    "asof": "2026-11-04",
+    "last": 1.3052,
+    "p05": 1.195926,
+    "p25": 1.259292,
+    "p50": 1.295007,
+    "p75": 1.338507,
+    "p95": 1.457187,
+    "prob_above_prehack": 0.59425
+   },
+   {
+    "coin": "XRP",
+    "horizon": 30,
+    "asof": "2026-11-04",
+    "last": 1.3052,
+    "p05": 1.048345,
+    "p25": 1.180126,
+    "p50": 1.274502,
+    "p75": 1.404245,
+    "p95": 1.756215,
+    "prob_above_prehack": 0.48125
+   },
+   {
+    "coin": "XRP",
+    "horizon": 90,
+    "asof": "2026-11-04",
+    "last": 1.3052,
+    "p05": 0.824056,
+    "p25": 1.041006,
+    "p50": 1.248558,
+    "p75": 1.550009,
+    "p95": 2.367464,
+    "prob_above_prehack": 0.46675
+   },
+   {
+    "coin": "XRP",
+    "horizon": 180,
+    "asof": "2026-11-04",
+    "last": 1.3052,
+    "p05": 0.607407,
+    "p25": 0.897718,
+    "p50": 1.228669,
+    "p75": 1.73897,
+    "p95": 3.430205,
+    "prob_above_prehack": 0.466
+   },
+   {
+    "coin": "XRP",
+    "horizon": 365,
+    "asof": "2026-11-04",
+    "last": 1.3052,
+    "p05": 0.416377,
+    "p25": 0.769668,
+    "p50": 1.269098,
+    "p75": 2.117935,
+    "p95": 5.479821,
+    "prob_above_prehack": 0.49375
+   },
+   {
+    "coin": "SOL",
+    "horizon": 7,
+    "asof": "2026-11-04",
+    "last": 95.61,
+    "p05": 86.799931,
+    "p25": 92.042076,
+    "p50": 95.375474,
+    "p75": 99.490266,
+    "p95": 107.475581,
+    "prob_above_prehack": 0.23325
+   },
+   {
+    "coin": "SOL",
+    "horizon": 30,
+    "asof": "2026-11-04",
+    "last": 95.61,
+    "p05": 73.937615,
+    "p25": 85.958424,
+    "p50": 95.583474,
+    "p75": 106.339729,
+    "p95": 127.122928,
+    "prob_above_prehack": 0.38975
+   },
+   {
+    "coin": "SOL",
+    "horizon": 90,
+    "asof": "2026-11-04",
+    "last": 95.61,
+    "p05": 50.406404,
+    "p25": 75.859954,
+    "p50": 96.285332,
+    "p75": 121.62146,
+    "p95": 177.976151,
+    "prob_above_prehack": 0.457
+   },
+   {
+    "coin": "SOL",
+    "horizon": 180,
+    "asof": "2026-11-04",
+    "last": 95.61,
+    "p05": 33.587076,
+    "p25": 63.236243,
+    "p50": 95.436697,
+    "p75": 142.111867,
+    "p95": 259.052733,
+    "prob_above_prehack": 0.46925
+   },
+   {
+    "coin": "SOL",
+    "horizon": 365,
+    "asof": "2026-11-04",
+    "last": 95.61,
+    "p05": 20.423182,
+    "p25": 51.980999,
+    "p50": 99.937494,
+    "p75": 182.65405,
+    "p95": 438.069209,
+    "prob_above_prehack": 0.50025
+   }
+  ],
+  "backtest": [
+   {
+    "coin": "BTC",
+    "horizon": 7,
+    "origins": 82,
+    "coverage_90": 0.865854,
+    "share_above_median": 0.609756
+   },
+   {
+    "coin": "BTC",
+    "horizon": 30,
+    "origins": 82,
+    "coverage_90": 0.865854,
+    "share_above_median": 0.52439
+   },
+   {
+    "coin": "BTC",
+    "horizon": 90,
+    "origins": 80,
+    "coverage_90": 0.8875,
+    "share_above_median": 0.6125
+   },
+   {
+    "coin": "BTC",
+    "horizon": 180,
+    "origins": 77,
+    "coverage_90": 0.87013,
+    "share_above_median": 0.662338
+   },
+   {
+    "coin": "BTC",
+    "horizon": 365,
+    "origins": 71,
+    "coverage_90": 0.901408,
+    "share_above_median": 0.605634
+   },
+   {
+    "coin": "BNB",
+    "horizon": 7,
+    "origins": 82,
+    "coverage_90": 0.817073,
+    "share_above_median": 0.536585
+   },
+   {
+    "coin": "BNB",
+    "horizon": 30,
+    "origins": 82,
+    "coverage_90": 0.926829,
+    "share_above_median": 0.573171
+   },
+   {
+    "coin": "BNB",
+    "horizon": 90,
+    "origins": 80,
+    "coverage_90": 0.9375,
+    "share_above_median": 0.6375
+   },
+   {
+    "coin": "BNB",
+    "horizon": 180,
+    "origins": 77,
+    "coverage_90": 0.922078,
+    "share_above_median": 0.727273
+   },
+   {
+    "coin": "BNB",
+    "horizon": 365,
+    "origins": 71,
+    "coverage_90": 0.830986,
+    "share_above_median": 0.633803
+   },
+   {
+    "coin": "ETH",
+    "horizon": 7,
+    "origins": 82,
+    "coverage_90": 0.792683,
+    "share_above_median": 0.536585
+   },
+   {
+    "coin": "ETH",
+    "horizon": 30,
+    "origins": 82,
+    "coverage_90": 0.841463,
+    "share_above_median": 0.536585
+   },
+   {
+    "coin": "ETH",
+    "horizon": 90,
+    "origins": 80,
+    "coverage_90": 0.9125,
+    "share_above_median": 0.6
+   },
+   {
+    "coin": "ETH",
+    "horizon": 180,
+    "origins": 77,
+    "coverage_90": 0.935065,
+    "share_above_median": 0.597403
+   },
+   {
+    "coin": "ETH",
+    "horizon": 365,
+    "origins": 71,
+    "coverage_90": 0.830986,
+    "share_above_median": 0.591549
+   },
+   {
+    "coin": "XRP",
+    "horizon": 7,
+    "origins": 82,
+    "coverage_90": 0.841463,
+    "share_above_median": 0.573171
+   },
+   {
+    "coin": "XRP",
+    "horizon": 30,
+    "origins": 82,
+    "coverage_90": 0.841463,
+    "share_above_median": 0.487805
+   },
+   {
+    "coin": "XRP",
+    "horizon": 90,
+    "origins": 80,
+    "coverage_90": 0.925,
+    "share_above_median": 0.55
+   },
+   {
+    "coin": "XRP",
+    "horizon": 180,
+    "origins": 77,
+    "coverage_90": 0.883117,
+    "share_above_median": 0.61039
+   },
+   {
+    "coin": "XRP",
+    "horizon": 365,
+    "origins": 71,
+    "coverage_90": 0.901408,
+    "share_above_median": 0.619718
+   },
+   {
+    "coin": "SOL",
+    "horizon": 7,
+    "origins": 61,
+    "coverage_90": 0.885246,
+    "share_above_median": 0.540984
+   },
+   {
+    "coin": "SOL",
+    "horizon": 30,
+    "origins": 61,
+    "coverage_90": 0.901639,
+    "share_above_median": 0.47541
+   },
+   {
+    "coin": "SOL",
+    "horizon": 90,
+    "origins": 59,
+    "coverage_90": 0.932203,
+    "share_above_median": 0.508475
+   },
+   {
+    "coin": "SOL",
+    "horizon": 180,
+    "origins": 56,
+    "coverage_90": 0.928571,
+    "share_above_median": 0.446429
+   },
+   {
+    "coin": "SOL",
+    "horizon": 365,
+    "origins": 50,
+    "coverage_90": 0.96,
+    "share_above_median": 0.44
+   }
+  ]
  }
 }
