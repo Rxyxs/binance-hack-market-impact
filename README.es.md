@@ -61,7 +61,7 @@ días y probado en los 30 siguientes, donde **no dio ninguna falsa alarma**), sa
 minutos previos a ese post, BNB transó **55 veces** su volumen normal para esa hora, con 43% de compras
 iniciadas por el comprador (lo normal es 50%). La misma alarma, sin cambios, sobre el hackeo de Binance
 de mayo de 2019 (7.000 BTC) saltó a las 23:48, **14 minutos después** del anuncio del exchange. En 2019
-el mercado se enteró por el anuncio; en 2026, por la blockchain.
+el mercado reaccionó al anuncio; en 2026 reaccionó antes de cualquier declaración, lo más probable por las transferencias públicas en la blockchain, aunque no puedo probar el canal.
 
 ![Detector](docs/img/es/detector.png)
 
@@ -114,7 +114,7 @@ de DefiLlama desde 2011, el retorno anormal estandarizado de Bitcoin en el día 
 siguiente promedia -0,17 (placebo p = 0,15 contra fechas al azar); la mitad son negativos. El hackeo a
 Binance es el 3° de 36 (-5,5% anormal en dos días, -1,96 desviaciones), un movimiento que igualan o
 superan el 3,5% de todas las ventanas de dos días. El tamaño del robo casi no predice la reacción
-(correlación -0,22).
+(correlación -0,22). Pero el promedio esconde algo: 5 de los 35 hackeos anteriores cayeron en el peor 5% de las ventanas de dos días. cuando por azar se esperarían 1,8 (p = 0,029), El mayor de ellos robó solo 196 millones de dólares, muy poco para mover Bitcoin, y DefiLlama fecha los hackeos solo por día, así que puede ser coincidencia con días malos y no un efecto; estos datos no lo separan.
 
 ![Estudio de eventos](docs/img/es/event_study.png)
 
@@ -125,6 +125,10 @@ de una fecha cualquiera; a un año queda -10,9% contra +15,6%, sin ser concluyen
 ![Después de un hackeo](docs/img/es/after_hacks.png)
 
 ![Recuperación](docs/img/es/recovery.png)
+
+**No fue el peor golpe del año.** Bitcoin tuvo **8 días peores** en 2026 que el día del hackeo (-4,1%). El peor fue el 5 de febrero (-14,0%, liquidaciones forzadas según la prensa). El 5 de noviembre, una semana después del hackeo, cayó -5,5% por una venta de tecnológicas, sin novedades del hackeo: el mismo patrón del hallazgo 1, esta vez sin el robo. Ningún hito de la guerra con Irán coincide con las mayores caídas. Al 5 de noviembre, respecto del precio cuando partió el hackeo: BTC -5,9%. BNB -7,4%. ETH -4,2%. XRP -5,9%. SOL -10,5%; ETH y XRP lo habían recuperado el 4 de noviembre y volvieron a perderlo.
+
+![Peores días de 2026](docs/img/es/year_shocks.png)
 
 **8. ¿De verdad había tendencia alcista?** El 28 de octubre Bitcoin cerró en 81.344 dólares. Había
 subido 43% en el tercer trimestre (su promedio de 50 días, 81.943, estaba sobre el de 200, 73.111), pero
@@ -167,7 +171,7 @@ Las medianas son "sin cambio", como dice la evaluación que deben ser; la inform
 ![Pronóstico](docs/img/es/nowcast.png)
 
 **11. Hacia dónde puede ir el precio.** Rangos armados con pedazos de los movimientos históricos de cada moneda,
-sin agregar tendencia. No es una predicción: BTC a un mes 67.752 - 97.839 y a un año 37.696 - 173.735 dólares (90%). Probado desde
+sin agregar tendencia. No es una predicción: BTC, desde el cierre del 5 de noviembre, a un mes 62.009 - 95.519 y a un año 34.424 - 166.928 dólares (90%). Probado desde
 cada mes desde 2020 con datos anteriores, el rango de 90% acertó 84% a 7 días y 88% a un año.
 
 ![Escenarios](docs/img/es/scenarios.png)

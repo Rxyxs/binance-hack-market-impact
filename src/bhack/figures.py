@@ -3,6 +3,8 @@ the chart shows, and labels avoid jargon. `render_all` needs the downloaded data
 reports/results.json; it never refits a model."""
 from __future__ import annotations
 
+import textwrap
+
 import matplotlib
 
 matplotlib.use("Agg")
@@ -263,9 +265,10 @@ def venues(g: pd.DataFrame):
     _vline(ax, T_FIRST_OUTFLOW, T("hackeo", "hack"), y=0.85)
     _day_month(ax)
     ax.set_ylabel(T("Binance más caro en...", "Binance dearer by..."))
+    ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(0.05))
     _pct(ax, "y", 2)
-    ax.set_title(T("Sin poder retirar, Binance quedó apenas 0,1% más caro: el mercado no temió una quiebra",
-                   "Unable to withdraw, Binance sat just 0.1% dearer: the market did not fear a collapse"))
+    ax.set_title(T("Sin poder retirar, Binance quedó apenas 0,1% más caro: el precio no reflejó miedo a una quiebra",
+                   "Unable to withdraw, Binance sat just 0.1% dearer: prices did not reflect fear of a collapse"))
     ax.legend(fontsize=8, loc="upper left")
     _save(fig, "venues")
 
@@ -281,9 +284,9 @@ def reserve_flows(rf: dict):
     for t, v in d.net_flow_bn.items():
         if abs(v) > 1.4:
             ax.text(t, v, N(v, 1, True), ha="center", va="top" if v < 0 else "bottom", fontsize=8.5, color=INK2)
-    for t, lab in [(theft, T("robo", "theft")), (pd.Timestamp("2026-10-30 12:00"), T("cerrado", "halted")),
-                   (pd.Timestamp("2026-11-01 12:00"), T("clientes retiran", "customers withdraw"))]:
-        ax.text(t, 0.55, lab, ha="center", fontsize=8.5, color=INK2)
+    for t, lab, y in [(theft, T("robo", "theft"), 0.55), (pd.Timestamp("2026-10-30 12:00"), T("cerrado", "halted"), 1.05),
+                      (pd.Timestamp("2026-11-01 12:00"), T("clientes retiran", "customers withdraw"), 0.55)]:
+        ax.text(t, y, lab, ha="center", fontsize=8.5, color=INK2)
     ax.axhline(0, color=AXIS, lw=0.8)
     ax.set_ylabel(T("entradas menos salidas,\nmiles de millones US$", "inflows minus outflows,\n$ billion"))
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=3))
@@ -373,8 +376,8 @@ def event_study(tab: pd.DataFrame, placebo_vals: np.ndarray):
     ax.minorticks_off()
     ax.set_xlabel(T("monto robado", "amount stolen"))
     ax.set_ylabel(T("movimiento de BTC en 2 días\n(en movimientos típicos; abajo = cae)", "BTC move over 2 days\n(in typical moves; down = fell)"))
-    ax.set_title(T("Robar más no significa que Bitcoin caiga más: casi todos los hackeos quedan en la zona normal",
-                   "Stealing more does not mean Bitcoin falls more: most hacks stay in the normal zone"), fontsize=10.5)
+    ax.set_title(T("Robar más no implica que Bitcoin caiga más; la mayoría queda en la zona normal, pero sobran casos abajo",
+                   "Stealing more does not mean Bitcoin falls more; most stay in the normal zone, but too many sit below it"), fontsize=10)
     ax.legend(fontsize=8, loc="lower center")
     _save(fig, "event_study")
 
@@ -395,8 +398,8 @@ def history(btc: pd.Series, hacks: pd.DataFrame, by_year: pd.DataFrame):
         if h.amount >= 450e6:
             a1.annotate(h["name"].replace(" CEX", ""), (d, p), xytext=(-6, 9), textcoords="offset points",
                         fontsize=8, color=INK2, ha="right")
-    a1.set_title(T("Bitcoin siguió subiendo pese a cada gran hackeo (punto naranjo = hackeo a exchange de US$100 M o más)",
-                   "Bitcoin kept climbing despite every big hack (orange dot = exchange hack of $100M or more)"), fontsize=10.5)
+    a1.set_title(T("Los grandes hackeos aparecen tanto en alzas como en caídas (punto naranjo = hackeo de US$100 M o más)",
+                   "Big hacks appear in both rises and falls (orange dot = exchange hack of $100M or more)"), fontsize=10.5)
     by_year = pd.DataFrame(by_year)
     yrs = pd.to_datetime(by_year.year.astype(str) + "-07-01")
     a2.bar(yrs, by_year.stolen_bn - by_year.cex_stolen_bn, width=300, color=GRAY_SERIES, label=T("DeFi, puentes y otros", "DeFi, bridges, other"))
@@ -482,6 +485,36 @@ def context_2026(btc: pd.Series, brent: pd.Series, us10y: pd.Series, gpr: pd.Ser
     _save(fig, "context_2026")
 
 
+def year_shocks(year: dict):
+    s = pd.Series({pd.Timestamp(d): 100 * v for d, v in year["series"]})
+    fig, ax = plt.subplots(figsize=(10, 4.4))
+    named = {d["date"]: d for d in year["days"]}
+    colors = [ORANGE if d.strftime("%Y-%m-%d") == "2026-10-29" else (BLUE if d.strftime("%Y-%m-%d") in named else GRAY_SERIES) for d in s.index]
+    ax.bar(s.index, s.values, width=1.0, color=colors)
+    spots = {"2026-02-05": ("2026-02-16", -13.6, "left"), "2026-01-31": ("2026-01-27", -8.8, "right"),
+             "2026-06-02": ("2026-06-09", -7.6, "left"), "2026-11-05": ("2026-11-01", -9.6, "right"), "2026-10-29": ("2026-10-24", -6.2, "right")}
+    for d, e in named.items():
+        lab = e["label_es"] if LANG == "es" else e["label_en"]
+        if d == "2026-01-31":  # little room before the start of the year
+            lab = "\n".join(textwrap.wrap(lab, 20))
+        v = 100 * e["change"]
+        x, y, ha = spots[d]
+        ax.annotate(f"{N(v, 1, True, '%')} {lab}", (pd.Timestamp(d), v), xytext=(pd.Timestamp(x), y), textcoords="data", ha=ha, va="center",
+                    fontsize=8, color=INK, arrowprops=dict(arrowstyle="-", color=AXIS, lw=0.7))
+    for i, (d, lab) in enumerate([("2026-02-28", T("inicia guerra Irán", "Iran war begins")), ("2026-04-08", T("alto al fuego", "ceasefire")),
+                                  ("2026-06-17", T("memo de paz", "peace memo")), ("2026-07-08", T("cae la tregua", "truce collapses"))]):
+        ax.axvline(pd.Timestamp(d), color=AXIS, lw=0.8, zorder=0)
+        ax.text(pd.Timestamp(d), 0.99 - 0.05 * (i % 2), f" {lab}", transform=ax.get_xaxis_transform(), fontsize=7.5, color=INK2, va="top")
+    ax.axhline(0, color=AXIS, lw=0.8)
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    _month(ax)
+    ax.set_ylabel(T("cambio de BTC en el día", "BTC change on the day"))
+    _pct(ax, "y", 0, True)
+    ax.set_title(T(f"El hackeo no fue el peor día de 2026: hubo {year['worse_than_hack']} días peores para Bitcoin",
+                   f"The hack was not 2026's worst day: Bitcoin had {year['worse_than_hack']} worse days"))
+    _save(fig, "year_shocks")
+
+
 def after_hacks(paths: pd.DataFrame, horizons: list[dict]):
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(10.5, 4.2), gridspec_kw={"width_ratios": [1.35, 1]})
     p = 100 * paths
@@ -525,18 +558,27 @@ def recovery(coins: list[dict]):
     low, last = 100 * d["low_change"].values, 100 * d["change_to_last"].values
     ax.hlines(y, low, last, color=GRID, lw=3)
     ax.scatter(low, y, color=RED, s=55, zorder=3, label=T("peor momento", "worst moment"), edgecolor=SURFACE, lw=1)
-    ax.scatter(last, y, color=BLUE, s=55, zorder=3, label=T(f"último cierre ({d['last_day'].iloc[0][8:]} nov)", f"last close (Nov {d['last_day'].iloc[0][8:]})"),
+    ax.scatter(last, y, color=BLUE, s=55, zorder=3, label=T(f"cierre del {int(d['last_day'].iloc[0][8:])} nov", f"Nov {int(d['last_day'].iloc[0][8:])} close"),
                edgecolor=SURFACE, lw=1)
     for i in range(len(d)):
-        ax.text(low[i], i - 0.27, N(low[i], 1, True, "%"), ha="center", fontsize=8, color=INK2)
-        ax.text(last[i], i - 0.27, N(last[i], 1, True, "%"), ha="center", fontsize=8, color=INK2)
+        ax.annotate(N(low[i], 1, True, "%"), (low[i], i), xytext=(-8, 0), textcoords="offset points", ha="right", va="center", fontsize=8, color=INK2)
+        ax.annotate(N(last[i], 1, True, "%"), (last[i], i), xytext=(8, 0), textcoords="offset points", ha="left", va="center", fontsize=8, color=INK2)
     ax.axvline(0, color=INK2, lw=0.9)
     ax.text(0, -0.62, T(" 0% = precio cuando partió el hackeo", " 0% = price when the hack began"), fontsize=8, color=INK2, va="center")
     ax.set_yticks(y, d.coin)
     ax.set_ylim(len(d) - 0.4, -0.7)
     _pct(ax, "x", 0, True)
-    ax.set_title(T("ETH y XRP ya recuperaron el precio previo; BTC está cerca; BNB y SOL siguen abajo",
-                   "ETH and XRP are back above the earlier price; BTC is close; BNB and SOL remain below"), fontsize=10.5)
+    above, touched = list(d.coin[d["above_now"]]), list(d.coin[d["recovered"] & ~d["above_now"]])
+    and_ = T(" y ", " and ")
+    if above:
+        title = T(f"{and_.join(above)} están sobre el precio previo; las demás siguen abajo", f"{and_.join(above)} are above the earlier price; the others remain below")
+    elif touched:
+        title = T(f"Ninguna está sobre el precio previo: {and_.join(touched)} lo recuperaron y volvieron a perderlo",
+                  f"None is above the earlier price: {and_.join(touched)} regained it and lost it again")
+    else:
+        title = T("Ninguna ha recuperado el precio previo al hackeo", "None has regained the price it had before the hack")
+    ax.set_title(title, fontsize=10.5)
+    ax.set_xlim(min(low.min(), last.min()) - 1.5, max(1, last.max() + 1.5))
     ax.legend(fontsize=8, loc="upper left", bbox_to_anchor=(0, -0.08), ncol=2)
     _save(fig, "recovery")
 
@@ -569,7 +611,7 @@ def skill(y1: list[dict], vol: list[dict], gru: dict):
     a2.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(5))
     _pct(a2)
     a2.set_ylabel(T("variación anticipada", "variation anticipated"))
-    a2.set_title(T("Turbulencia próxima semana: 65 variables no superan al modelo simple", "Next week's turbulence: 65 features don't beat the simple model"), fontsize=10)
+    a2.set_title(T("Turbulencia: 65 variables no superan con claridad al modelo simple", "Turbulence: 65 features do not clearly beat the simple model"), fontsize=10)
     fig.tight_layout()
     _save(fig, "skill")
 
@@ -711,6 +753,7 @@ def render_all(r: dict) -> None:
         context_2026(btc_close, mac["BZ=F"], mac["^TNX"], mac["GPRD"])
         detector_traces(det)
         after_hacks(am["paths"], r["aftermath"]["horizons"])
+        year_shocks(r["aftermath"]["year"])
         recovery(r["aftermath"]["coins"])
         skill(r["forecast"]["y1_scores"], r["forecast"]["vol_scores"], r["gru"])
         ablation(r["forecast"]["ablation"])

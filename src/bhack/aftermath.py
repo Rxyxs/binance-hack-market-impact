@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 from . import datasets, eventstudy
-from .config import T_FIRST_OUTFLOW, US_CLOSE
+from .config import ANALYSIS_END, CATALOG, T_FIRST_OUTFLOW, US_CLOSE
 
 HORIZONS = (7, 30, 90, 365)
 BIG_USD = 250e6
@@ -20,9 +20,8 @@ COINS = ["BTC", "BNB", "ETH", "XRP", "SOL"]
 
 
 def daily_latest(coin: str) -> pd.DataFrame:
-    """Binance daily bars for a coin up to the last closed UTC day."""
-    today = pd.Timestamp.now(tz="UTC").normalize().tz_localize(None)
-    d = datasets._klines(coin, "1d", "2017-08-01", today.date())
+    """Binance daily bars for a coin up to the analysis date."""
+    d = datasets._klines(coin, "1d", "2017-08-01", ANALYSIS_END)
     d.index = d.index.tz_localize(None)
     return d
 
@@ -49,8 +48,9 @@ def forward_return(close: pd.Series, day0: pd.Timestamp, h: int) -> float:
 
 
 def horizon_table(close: pd.Series, ev: pd.DataFrame, draws: int = 4000, seed: int = 5) -> pd.DataFrame:
-    """Median Bitcoin return after hacks against random dates from the same calendar years."""
+    """Median Bitcoin return after earlier hacks against random dates of the same calendar years."""
     rng = np.random.default_rng(seed)
+    ev = ev[ev["day0"] < HACK_DAY]  # the hack under study is not part of its own benchmark
     rows = []
     for label, sub in [("all", ev), ("big", ev[ev.amount >= BIG_USD])]:
         for h in HORIZONS:
@@ -114,11 +114,13 @@ def coin_recovery() -> pd.DataFrame:
         pre = float(one.loc[:US_CLOSE - pd.Timedelta(minutes=1)].iloc[-1])
         low = one.loc[T_FIRST_OUTFLOW:]
         d = daily_latest(c)
-        rows.append({"coin": c, "price_at_hack": pre, "low": float(low.min()),
-                     "low_time": str(low.idxmin()), "low_change": float(low.min() / pre - 1),
+        # minute bars end on 2 November; daily lows cover the days after them
+        worst = min(float(low.min()), float(d["low"].loc["2026-10-29":].min()))
+        rows.append({"coin": c, "price_at_hack": pre, "low": worst, "low_change": worst / pre - 1,
                      "last_close": float(d["close"].iloc[-1]), "last_day": str(d.index[-1].date()),
                      "change_to_last": float(d["close"].iloc[-1] / pre - 1),
-                     "recovered": bool((d["close"].loc["2026-10-30":] >= pre).any())})
+                     "recovered": bool((d["close"].loc["2026-10-30":] >= pre).any()),
+                     "above_now": bool(d["close"].iloc[-1] >= pre)})
     return pd.DataFrame(rows)
 
 
@@ -141,13 +143,32 @@ def volatility_change(coin: str) -> dict:
             "range_since": float(rng.loc[HACK_DAY:].mean()), "days_since": int((rng.index >= HACK_DAY).sum())}
 
 
+def year_shocks(close: pd.Series) -> dict:
+    """How the hack day ranks among 2026's days, and Bitcoin around each dated event of the year."""
+    daily = close.pct_change().loc["2026-01-01":]
+    rank = lambda d: int((daily < daily.loc[d]).sum() + 1)  # noqa: E731
+    worst = pd.read_csv(CATALOG / "worst_days_2026.csv", parse_dates=["date"])
+    days = [{"date": str(r.date.date()), "change": float(daily.loc[r.date]), "rank": rank(r.date),
+             "label_es": r.label_es, "label_en": r.label_en, "source": r.source} for r in worst.itertuples()]
+    ctx = pd.read_csv(CATALOG / "context_2026.csv", parse_dates=["date"])
+    events = []
+    for r in ctx[ctx.date <= daily.index[-1]].itertuples():
+        i = close.index.searchsorted(r.date)
+        week = close.iloc[i + 6] / close.iloc[i - 1] - 1 if i + 6 < len(close) else np.nan
+        events.append({"date": str(r.date.date()), "kind": r.kind, "event": r.event, "change_day": float(daily.loc[r.date]),
+                       "change_week": float(week), "rank": rank(r.date), "source": r.source})
+    return {"n_days": len(daily), "last_day": str(daily.index[-1].date()), "days": days, "events": events,
+            "series": [[str(d.date()), float(v)] for d, v in daily.items()],
+            "worse_than_hack": int((daily < daily.loc[HACK_DAY]).sum())}
+
+
 def run() -> dict:
     close = btc_close()
     ev = _events(datasets.hacks())
     return {"horizons": horizon_table(close, ev), "paths": paths(close, ev),
             "recovery_hacks": recovery_table(close, ev), "coins": coin_recovery(),
             "days": pd.concat([days_around(c) for c in ["BTC", "BNB"]], ignore_index=True),
-            "volatility": pd.DataFrame([volatility_change(c) for c in COINS])}
+            "volatility": pd.DataFrame([volatility_change(c) for c in COINS]), "year": year_shocks(close)}
 
 
 if __name__ == "__main__":

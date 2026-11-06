@@ -40,8 +40,9 @@ def _records(df: pd.DataFrame) -> list[dict]:
 
 def aftermath_results() -> dict:
     a = aftermath.run()
-    return _clean({k: _records(a[k].assign(date=a[k]["date"].astype(str))) if k == "days" else _records(a[k])
-                   for k in ["horizons", "recovery_hacks", "coins", "volatility", "days"]})
+    out = {k: _records(a[k].assign(date=a[k]["date"].astype(str))) if k == "days" else _records(a[k])
+           for k in ["horizons", "recovery_hacks", "coins", "volatility", "days"]}
+    return _clean(out | {"year": a["year"]})
 
 
 def scenario_results() -> dict:

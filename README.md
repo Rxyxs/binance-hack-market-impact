@@ -59,8 +59,8 @@ days, then checked on the next 30, where it raised **no false alarms**), went of
 28 minutes after the first outflow and **42 minutes before** Changpeng Zhao's post. In the 75
 minutes before that post, BNB traded **55 times** its usual volume for that hour with 43% of it
 buyer-initiated (normally 50%). The same alarm, unchanged, on Binance's May 2019 hack (7,000
-BTC) went off at 23:48, **14 minutes after** the exchange announced it. In 2019 the market learned from
-the announcement; in 2026 it learned from the blockchain.
+BTC) went off at 23:48, **14 minutes after** the exchange announced it. In 2019 the market moved on
+the announcement; in 2026 it moved before any statement, most likely on the public on-chain transfers, though I cannot prove the channel.
 
 ![Detector](docs/img/detector.png)
 
@@ -109,7 +109,7 @@ only in size.** Across the 36 hacks of centralized exchanges of $30 million or m
 DefiLlama's register since 2011, Bitcoin's standardized abnormal return over the incident day and
 the next averages -0.17 (placebo p = 0.15 against random dates); half are negative. The Binance
 hack ranks 3rd of 36 (-5.5% abnormal over two days, -1.96 sd), a move that 3.5% of all two-day
-windows match or exceed. Hack size barely predicts the reaction (correlation -0.22).
+windows match or exceed. Hack size barely predicts the reaction (correlation -0.22). The average hides something, though: 5 of the 35 earlier hacks fell in the worst 5% of two-day windows, when chance would give 1.8 (p = 0.029). The largest of them stole only $196 million, too little to move Bitcoin, and DefiLlama dates hacks by day only, so this may be coincidence with bad days rather than an effect; this data cannot separate the two.
 
 ![Event study](docs/img/event_study.png)
 
@@ -120,6 +120,10 @@ date; at a year it stands at -10.9% against +15.6%, which is not conclusive (p =
 ![After a hack](docs/img/after_hacks.png)
 
 ![Recovery](docs/img/recovery.png)
+
+**Not the worst blow of the year.** Bitcoin had **8 worse days** in 2026 than the day of the hack (-4.1%). The worst was 5 February (-14.0%, forced liquidations according to the press). On 5 November, a week after the hack, it fell -5.5% in a tech sell-off, with no news on the hack: the same pattern as finding 1, this time without the theft. None of the milestones of the war with Iran coincides with the biggest falls. As of 5 November, against the price when the hack began: BTC -5.9%, BNB -7.4%, ETH -4.2%, XRP -5.9%, SOL -10.5%; ETH and XRP had regained it on 4 November and lost it again.
+
+![Worst days of 2026](docs/img/year_shocks.png)
 
 **8. Was the market really in an uptrend?** On 28 October Bitcoin closed at $81,344. It had gained
 43% in the third quarter (its 50-day average, $81,943, was above the 200-day, $73,111), but it was
@@ -162,7 +166,7 @@ The medians are "no change", as the evaluation says they should be; the informat
 ![Forecast](docs/img/nowcast.png)
 
 **11. Where the price can go.** Ranges built from pieces of each coin's own historical moves, with no trend
-added. It is not a prediction: BTC at a month 67,752 - 97,839 and at a year 37,696 - 173,735 dollars (90%). Tested from every month
+added. It is not a prediction: BTC, from the close of 5 November, at a month 62,009 - 95,519 and at a year 34,424 - 166,928 dollars (90%). Tested from every month
 since 2020 on earlier data, the 90% range held 84% at 7 days and 88% at a year.
 
 ![Scenarios](docs/img/scenarios.png)

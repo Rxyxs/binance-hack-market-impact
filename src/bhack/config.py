@@ -36,6 +36,10 @@ T_HALT = pd.Timestamp("2026-10-30 00:13", tz=UTC)           # deposits and withd
 T_REOPEN = pd.Timestamp("2026-11-01 06:00", tz=UTC)         # phase one of withdrawals
 US_CLOSE = pd.Timestamp("2026-10-29 20:00", tz=UTC)         # 16:00 New York (EDT)
 
+# Last UTC day (exclusive) used by the aftermath and scenario analyses, so a rerun gives the same
+# numbers. The interactive chart keeps updating on its own.
+ANALYSIS_END = "2026-11-06"
+
 # Minute-level window studied around the hack.
 WIN_START = pd.Timestamp("2026-10-22", tz=UTC)
 WIN_END = pd.Timestamp("2026-11-03", tz=UTC)  # exclusive

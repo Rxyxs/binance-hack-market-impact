@@ -106,18 +106,42 @@ def history_figure(m15: dict, d1: dict, lang: str) -> None:
             ax.set_title(f"{coin}, {name}", color="#eaecef", fontsize=9.5, loc="left")
             if name == names[3]:
                 ax.set_yscale("log")
+                ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:,.0f}".replace(",", "." if lang == "es" else ",")))
             ax.set_facecolor(bg)
             ax.grid(color=grid, lw=0.5)
             ax.tick_params(colors=muted, labelsize=7)
             ax.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(3))
-            ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d/%m/%y"))
+            ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter(
+                "%Y" if name == names[3] else ("%m/%Y" if name == names[2] else "%d/%m")))
             for sp in ax.spines.values():
                 sp.set_color(grid)
+    fig.suptitle("De cerca parece un derrumbe; en toda la historia es un punto más (línea amarilla = hackeo)" if lang == "es"
+                 else "Up close it looks like a collapse; over the full history it is one more point (yellow line = hack)",
+                 color="#eaecef", x=0.01, ha="left", fontsize=11, fontweight="bold")
     fig.tight_layout()
     folder = IMG / "es" if lang == "es" else IMG
     folder.mkdir(parents=True, exist_ok=True)
     fig.savefig(folder / "binance_history.png", dpi=150, facecolor=bg)
     plt.close(fig)
+
+
+def refresh_daily() -> int:
+    """Append newly published daily candles to docs/candles.js. Run every day by CI."""
+    path = ROOT / "docs" / "candles.js"
+    text = path.read_text(encoding="utf-8").strip()
+    data = json.loads(text[len("window.CANDLES="):].rstrip(";"))
+    today = pd.Timestamp.now(tz="UTC").normalize().tz_localize(None)
+    added = 0
+    for c in COINS:
+        bars = data["1d"][c]
+        start = pd.Timestamp(bars[-1][0], unit="s") + pd.Timedelta(days=1)
+        if start >= today:
+            continue
+        new = sources.binance_klines(f"{c}USDT", "1d", str(start.date()), str(today.date()))
+        bars.extend(_bars(new))
+        added += len(new)
+    path.write_text("window.CANDLES=" + json.dumps(data, separators=(",", ":")) + ";\n", encoding="utf-8")
+    return added
 
 
 def build() -> dict:
@@ -145,5 +169,9 @@ def build() -> dict:
 
 
 if __name__ == "__main__":
+    import sys
+    if "--refresh" in sys.argv:
+        print("new daily candles:", refresh_daily())
+        sys.exit()
     o = build()
     print({k: len(o[k]["BTC"]) for k in ["15m", "fut", "oi", "1d"]}, np.round(o["fc"]["BTC"][1][1:], 0))
