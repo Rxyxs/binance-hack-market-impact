@@ -230,8 +230,9 @@
   }
   var bar = document.getElementById("cx-bar");
   function add(label, key, val) {
-    var b = document.createElement("button");
-    b.type = "button"; b.textContent = label; b.dataset.key = key; b.dataset.val = val;
+    var b = document.createElement("button"), p = label.split("|");
+    b.type = "button"; b.dataset.key = key; b.dataset.val = val;
+    b.innerHTML = p.length > 1 ? '<span lang="es">' + p[0] + '</span><span lang="en">' + p[1] + "</span>" : label;
     b.addEventListener("click", function () { state[key] = val; sync(); draw(); });
     bar.appendChild(b);
   }
@@ -242,7 +243,7 @@
   }
   ["BTC", "BNB", "ETH", "XRP", "SOL"].forEach(function (c) { add(c, "coin", c); });
   var sep = document.createElement("span"); sep.className = "cx-sep"; bar.appendChild(sep);
-  [["Semana / Week", "week"], ["Mes / Month", "month"], ["Año / Year", "year"], ["Histórico / All", "all"], ["Futuros / Futures", "fut"]].forEach(function (x) { add(x[0], "tf", x[1]); });
+  [["Semana|Week", "week"], ["Mes|Month", "month"], ["Año|Year", "year"], ["Histórico|All", "all"], ["Futuros|Futures", "fut"]].forEach(function (x) { add(x[0], "tf", x[1]); });
   sync(); draw();
 })();
 </script>

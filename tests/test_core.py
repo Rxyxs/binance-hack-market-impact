@@ -166,3 +166,22 @@ def test_scenario_backtest_is_calibrated_on_a_random_walk():
     close = pd.Series(100 * np.exp(np.cumsum(rng.standard_t(4, len(idx)) * 0.02)), index=idx)
     t = scenarios.backtest(close, 30)
     assert 0.78 <= t["inside"].mean() <= 1.0
+
+
+def test_tail_excess_counts_only_earlier_hacks():
+    allvals = np.linspace(-3, 3, 1001)
+    tab = pd.DataFrame({"date": ["2020-01-01", "2021-01-01", "2022-01-01", "2026-10-29"],
+                        "name": ["a", "b", "c", "Binance"], "amount_m": [40.0, 50.0, 60.0, 6000.0],
+                        "scar_1": [-2.9, -2.8, 0.1, -2.9]})
+    out = eventstudy.tail_excess(tab, allvals)
+    assert out["n"] == 3 and out["below"] == 2 and out["above"] == 0
+    assert out["largest_below_m"] == 50.0 and out["p_below"] < 0.01
+
+
+def test_coin_recovery_low_is_never_above_the_last_close():
+    # the minute data ends before the last close, so the low must also look at daily lows
+    import json
+    from pathlib import Path
+    res = json.loads((Path(__file__).resolve().parents[1] / "reports" / "results.json").read_text(encoding="utf-8"))
+    for c in res["aftermath"]["coins"]:
+        assert c["low"] <= c["last_close"]

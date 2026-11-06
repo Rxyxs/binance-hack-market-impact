@@ -34,6 +34,7 @@ def headline_numbers():
     f = R["forecast"]
     y1 = {d["model"]: d for d in f["y1_scores"] if d["coin"] == "all"}
     vol = {d["model"]: d for d in f["vol_scores"] if d["coin"] == "all"}
+    fan = {(d["coin"], d["horizon"]): d for d in R["scenarios"]["fan"]}
     return [
         num(-100 * btc["actual"]) + "%",
         num(-100 * btc["explained"]),
@@ -61,6 +62,11 @@ def headline_numbers():
         num(100 * vol["har"]["r2"]),
         num(100 * vol["lgb"]["r2"]),
         num(vol["lgb"]["dm_p"], 2),
+        str(R["aftermath"]["year"]["worse_than_hack"]),
+        num(es_btc["tail"]["p_below"], 3),
+        *[(f"{fan[('BTC', h)]['p05']:,.0f} - {fan[('BTC', h)]['p95']:,.0f}",
+           f"{fan[('BTC', h)]['p05']:,.0f} - {fan[('BTC', h)]['p95']:,.0f}".replace(",", "."))
+          for h in (30, 365)],
     ]
 
 

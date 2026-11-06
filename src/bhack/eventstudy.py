@@ -83,6 +83,19 @@ def placebo(r: pd.Series, n_events: int, exclude: pd.DatetimeIndex, col: str = "
     return np.array([rng.choice(vals, n_events, replace=False).mean() for _ in range(draws)]), vals
 
 
+def tail_excess(tab: pd.DataFrame, allvals: np.ndarray, q: float = 0.05) -> dict:
+    """The average can hide a fat tail: how many earlier hacks fall in the worst q of all days?"""
+    from scipy import stats
+    day = pd.to_datetime(tab["date"])
+    past = tab[day < "2026-10-29"]
+    lo, hi = np.quantile(allvals, [q, 1 - q])
+    low, high = past[past.scar_1 < lo], past[past.scar_1 > hi]
+    return {"q": q, "n": len(past), "below": len(low), "above": len(high), "expected": q * len(past),
+            "p_below": float(stats.binom.sf(len(low) - 1, len(past), q)),
+            "largest_below_m": float(low.amount_m.max()), "names_below": [
+                f"{r.name} {pd.Timestamp(r.date).year}" for r in low.sort_values("scar_1").itertuples()]}
+
+
 def run() -> dict:
     hacks = datasets.hacks()
     out = {}
@@ -104,6 +117,7 @@ def run() -> dict:
             "p_abs_sar_0_5": float((absdist >= tab["abs_sar_0_5"].mean()).mean()),
             "placebo_abs_mean": float(absdist.mean()),
             "corr_size_scar_1": float(np.corrcoef(np.log(tab.amount_m), tab.scar_1)[0, 1]),
+            "tail": tail_excess(tab, allvals),
             "binance_2026": None if b is None else {
                 "car_1": float(b.car_1), "scar_1": float(b.scar_1), "car_5": float(b.car_5),
                 "car_10": float(b.car_10),
