@@ -1,6 +1,6 @@
 {
  "asof": "2026-11-02",
- "checked": "2026-11-09",
+ "checked": "2026-11-10",
  "rows": [
   {
    "coin": "BNB",
@@ -24,11 +24,11 @@
    "p50": 698.010889,
    "p95": 786.685873,
    "last_close": 699.25,
-   "close": null,
-   "source": null,
-   "inside_90": null,
-   "median_error": null,
-   "no_change_error": null
+   "close": 691.44,
+   "source": "binance",
+   "inside_90": true,
+   "median_error": -0.00941373423187375,
+   "no_change_error": -0.011169109760457596
   },
   {
    "coin": "BTC",
@@ -52,11 +52,11 @@
    "p50": 76627.172787,
    "p95": 86972.080796,
    "last_close": 76816.0,
-   "close": null,
-   "source": null,
-   "inside_90": null,
-   "median_error": null,
-   "no_change_error": null
+   "close": 75368.41,
+   "source": "binance",
+   "inside_90": true,
+   "median_error": -0.01642710726779617,
+   "no_change_error": -0.018844902103728356
   },
   {
    "coin": "ETH",
@@ -80,11 +80,11 @@
    "p50": 2251.786632,
    "p95": 2538.396432,
    "last_close": 2253.29,
-   "close": null,
-   "source": null,
-   "inside_90": null,
-   "median_error": null,
-   "no_change_error": null
+   "close": 2135.24,
+   "source": "binance",
+   "inside_90": true,
+   "median_error": -0.05175740469534862,
+   "no_change_error": -0.05239006075560637
   },
   {
    "coin": "SOL",
@@ -108,11 +108,11 @@
    "p50": 92.016346,
    "p95": 105.065908,
    "last_close": 91.98,
-   "close": null,
-   "source": null,
-   "inside_90": null,
-   "median_error": null,
-   "no_change_error": null
+   "close": 86.74,
+   "source": "binance",
+   "inside_90": true,
+   "median_error": -0.057341398885802364,
+   "no_change_error": -0.056968906283974885
   },
   {
    "coin": "XRP",
@@ -136,13 +136,13 @@
    "p50": 1.249366,
    "p95": 1.401836,
    "last_close": 1.2502,
-   "close": null,
-   "source": null,
-   "inside_90": null,
-   "median_error": null,
-   "no_change_error": null
+   "close": 1.0989,
+   "source": "binance",
+   "inside_90": false,
+   "median_error": -0.12043388406599831,
+   "no_change_error": -0.12102063669812835
   }
  ],
- "resolved": 5,
- "inside_90": 5
+ "resolved": 10,
+ "inside_90": 9
 }
